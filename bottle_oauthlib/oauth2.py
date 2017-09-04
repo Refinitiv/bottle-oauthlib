@@ -51,12 +51,19 @@ def add_params(params):
         bottle.request.oauth[k] = v
 
 
-def set_response(response, status, headers, body):
+def set_response(request, response, status, headers, body):
     response.status = status
     for k, v in headers.items():
         response.headers[k] = v
 
-    json_enabled = False  # todo: how to determine that?
+    """Determine if response should be in json or not, based on request:
+    RFC prefer json, but older clients doesn't work with it.
+
+    Examples:
+    rauth: send */* but work only with form-urlencoded.
+    requests-oauthlib: send application/json but work with both.
+    """
+    json_enabled = "application/json" == request.headers["Accept"]
     if json_enabled:
         response.body = body
     else:
@@ -89,7 +96,7 @@ class BottleOAuth2(object):
                 headers, body, status = self._server.create_token_response(
                     uri, http_method, body, headers, credentials_extra
                 )
-                set_response(bottle.response, status, headers, body)
+                set_response(bottle.request, bottle.response, status, headers, body)
                 func_response = f()
                 if not func_response:
                     return bottle.response

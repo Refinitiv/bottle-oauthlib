@@ -47,7 +47,7 @@ def add_params(params):
         bottle.request.oauth
     except AttributeError:
         bottle.request.oauth = {}
-    for k, v in params.iteritems():
+    for k, v in params.items():
         bottle.request.oauth[k] = v
 
 

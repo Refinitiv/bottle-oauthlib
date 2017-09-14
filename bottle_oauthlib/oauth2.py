@@ -6,6 +6,7 @@ import json
 from oauthlib.common import add_params_to_uri
 from oauthlib.oauth2 import FatalClientError
 from oauthlib.oauth2 import OAuth2Error
+import requests
 import sys
 
 
@@ -14,74 +15,95 @@ log.addHandler(logging.StreamHandler(sys.stdout))
 log.setLevel(logging.DEBUG)
 
 
-def extract_auth():
-    """Extract authentication tuple from request
-    Priority for HTTP Authentication Basic, then
-    Check if it's stored in Request Payload (for older clients)
+def extract_params(bottle_request):
+    """Extract bottle request informations to oauthlib implementation.
+    HTTP Authentication Basic is read but overloaded by payload
+
+    returns tuple of :
+    - url
+    - method
+    - body (or dict)
+    - headers (dict)
     """
-    if bottle.request.auth:
-        return bottle.request.auth
-    if "client_id" in bottle.request.forms:
-        if "client_secret" in bottle.request.forms:
-            return bottle.request.forms["client_id"], bottle.request.forms["client_secret"]
-        return bottle.request.forms["client_id"], None
-    return None, None
+    username, password = bottle_request.auth if bottle_request.auth else (None, None)
 
-
-def extract_params():
-    if bottle.request.forms:
+    if "application/x-www-form-urlencoded" in bottle_request.headers["Content-Type"]:
+        client = {}
+        if username is not None:
+            client["client_id"] = username
+        if password is not None:
+            client["client_secret"] = password
         return \
-            bottle.request.url, \
-            bottle.request.method, \
-            dict(bottle.request.forms.items()), \
-            dict(bottle.request.headers)
+            bottle_request.url, \
+            bottle_request.method, \
+            dict(client, **bottle_request.forms), \
+            dict(bottle_request.headers)
+
     return \
-        bottle.request.url, \
-        bottle.request.method, \
-        bottle.request.body, \
-        dict(bottle.request.headers)
+        bottle_request.url, \
+        bottle_request.method, \
+        bottle_request.body, \
+        dict(bottle_request.headers, Authorization=requests.auth._basic_auth_str(username, password))
 
 
-def add_params(params):
+def add_params(bottle_request, params):
     try:
-        bottle.request.oauth
+        bottle_request.oauth
     except AttributeError:
-        bottle.request.oauth = {}
-    for k, v in params.items():
-        bottle.request.oauth[k] = v
+        bottle_request.oauth = {}
+    if params:
+        for k, v in params.items():
+            bottle_request.oauth[k] = v
 
 
-def set_response(request, response, status, headers, body):
-    response.status = status
+def set_response(bottle_request, bottle_response, status, headers, body):
+    """Set status/headers/body into bottle_response.
+
+    Headers is a dict
+    Body is ideally a JSON string (not dict).
+    """
+    if not isinstance(headers, dict):
+        raise TypeError("a dict-like object is required, not {0}".format(type(headers)))
+    if not isinstance(body, str):
+        raise TypeError("a str-like object is required, not {0}".format(type(body)))
+
+    bottle_response.status = status
     for k, v in headers.items():
-        response.headers[k] = v
+        bottle_response.headers[k] = v
 
     """Determine if response should be in json or not, based on request:
-    RFC prefer json, but older clients doesn't work with it.
+    OAuth2.0 RFC recommands json, but older clients use form-urlencoded.
 
     Examples:
-    rauth: send */* but work only with form-urlencoded.
-    requests-oauthlib: send application/json but work with both.
+    rauth: send Accept:*/* but work only with response in form-urlencoded.
+    requests-oauthlib: send Accept:application/json but work with both
+    responses types.
     """
-    json_enabled = "application/json" == request.headers["Accept"]
-    if json_enabled:
-        response.body = body
-    else:
-        from urllib.parse import quote
-
+    try:
         values = json.loads(body)
-        response["Content-Type"] = "application/x-www-form-urlencoded"
-        response.body = ";".join([
-            "{0}={1}".format(
-                quote(k) if isinstance(k, str) else k,
-                quote(v) if isinstance(v, str) else v
-            ) for k, v in values.items()
-        ])
+    except json.decoder.JSONDecodeError:
+        # consider body as string but not JSON, we stop here.
+        bottle_response.body = body
+    else:  # consider body as JSON
+        # request want a json as response
+        if "Accept" in bottle_request.headers and "application/json" == bottle_request.headers["Accept"]:
+            bottle_response.body = body
+        else:
+            from urllib.parse import quote
+
+            bottle_response["Content-Type"] = "application/x-www-form-urlencoded"
+            bottle_response.body = "&".join([
+                "{0}={1}".format(
+                    quote(k) if isinstance(k, str) else k,
+                    quote(v) if isinstance(v, str) else v
+                ) for k, v in values.items()
+            ])
 
 
 class BottleOAuth2(object):
-    def __init__(self, server):
-        self._server = server
+    def __init__(self, bottle_server, oauthlib_server):
+        self._bottle = bottle_server
+        self._oauthlib = oauthlib_server
 
     def create_token_response(self, credentials=None):
         def decorator(f):
@@ -92,8 +114,8 @@ class BottleOAuth2(object):
                     credentials_extra = credentials(bottle.request)
                 except TypeError:
                     credentials_extra = credentials
-                uri, http_method, body, headers = extract_params()
-                headers, body, status = self._server.create_token_response(
+                uri, http_method, body, headers = extract_params(bottle.request)
+                headers, body, status = self._oauthlib.create_token_response(
                     uri, http_method, body, headers, credentials_extra
                 )
                 set_response(bottle.request, bottle.response, status, headers, body)
@@ -113,13 +135,13 @@ class BottleOAuth2(object):
                 except TypeError:
                     scopes_list = scopes
 
-                uri, http_method, body, headers = extract_params()
+                uri, http_method, body, headers = extract_params(bottle.request)
 
-                valid, r = self._server.verify_request(
+                valid, r = self._oauthlib.verify_request(
                     uri, http_method, body, headers, scopes_list)
 
                 # For convenient parameter access in the view
-                add_params({
+                add_params(bottle.request, {
                     'client': r.client,
                     'user': r.user,
                     'scopes': r.scopes
@@ -140,7 +162,7 @@ class BottleOAuth2(object):
                 raise Exception("not implemented")
 
                 try:
-                    scopes, credentials = self._server.validate_authorization_request(
+                    scopes, credentials = self._oauthlib.validate_authorization_request(
                         uri, http_method, body, headers
                     )
                     redirect_uri = credentials["redirect_uri"]  # ok ?
@@ -157,7 +179,7 @@ class BottleOAuth2(object):
                     ))
 
                 # For convenient parameter access in the view
-                add_params({
+                add_params(bottle.request, {
                     'credentials': credentials,
                     'scopes': scopes
                 })

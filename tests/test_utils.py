@@ -112,6 +112,25 @@ class extract_params_auth(unittest.TestCase):
         self.assertEqual(client_id, "foobar")
         self.assertEqual(client_secret, "barsecret")
 
+    def test_bearer_html(self):
+        self.request.headers["Content-Type"] = "text/html"
+        self.request.headers["Authorization"] = "Bearer myfootoken"
+        self.request.body = "<html>"
+        _, _, body, headers = oauth2.extract_params(self.request)
+        self.assertEqual(headers["Authorization"], "Bearer myfootoken")
+        self.assertEqual(body, "<html>")
+
+    def test_bearer_form(self):
+        self.request.headers["Content-Type"] = "application/x-www-form-urlencoded"
+        self.request.headers["Authorization"] = "Bearer myfootoken"
+        self.request.forms = {
+            "foo": "bar",
+            "bar": 42
+        }
+        _, _, body, headers = oauth2.extract_params(self.request)
+        self.assertEqual(headers["Authorization"], "Bearer myfootoken")
+        self.assertEqual(body, self.request.forms)
+
 
 class add_params(unittest.TestCase):
     def setUp(self):

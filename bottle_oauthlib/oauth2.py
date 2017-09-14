@@ -17,7 +17,7 @@ log.setLevel(logging.DEBUG)
 
 def extract_params(bottle_request):
     """Extract bottle request informations to oauthlib implementation.
-    HTTP Authentication Basic is read but overloaded by payload
+    HTTP Authentication Basic is read but overloaded by payload, if any.
 
     returns tuple of :
     - url
@@ -25,6 +25,8 @@ def extract_params(bottle_request):
     - body (or dict)
     - headers (dict)
     """
+
+    # this returns (None, None) for Bearer Token.
     username, password = bottle_request.auth if bottle_request.auth else (None, None)
 
     if "application/x-www-form-urlencoded" in bottle_request.headers["Content-Type"]:
@@ -39,11 +41,16 @@ def extract_params(bottle_request):
             dict(client, **bottle_request.forms), \
             dict(bottle_request.headers)
 
+    basic_auth = {}
+    if username is not None:
+        basic_auth = {
+            "Authorization": requests.auth._basic_auth_str(username, password)
+        }
     return \
         bottle_request.url, \
         bottle_request.method, \
         bottle_request.body, \
-        dict(bottle_request.headers, Authorization=requests.auth._basic_auth_str(username, password))
+        dict(bottle_request.headers, **basic_auth)
 
 
 def add_params(bottle_request, params):

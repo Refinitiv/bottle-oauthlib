@@ -167,28 +167,16 @@ class set_response(unittest.TestCase):
         self.response = bottle.LocalResponse()
 
     def test_wrong_status(self):
-        try:
+        with self.assertRaises(ValueError, msg="must raise an error cuz not a valid HTTP status_code"):
             oauth2.set_response(self.request, self.response, {}, {}, "body")
-        except ValueError:
-            self.assertTrue(True)
-        else:
-            self.assertTrue(False, "must raise an error cuz not a valid HTTP status_code")
 
     def test_wrong_headers(self):
-        try:
+        with self.assertRaises(TypeError, msg="must raise an error cuz headers is not a valid dict"):
             oauth2.set_response(self.request, self.response, 200, "string", "body")
-        except TypeError:
-            self.assertTrue(True)
-        else:
-            self.assertTrue(False, "must raise an error cuz headers is not a valid dict")
 
     def test_wrong_body(self):
-        try:
+        with self.assertRaises(TypeError, msg="must raise an error cuz body is not a valid string"):
             oauth2.set_response(self.request, self.response, 200, {}, {})
-        except TypeError:
-            self.assertTrue(True)
-        else:
-            self.assertTrue(False, "must raise an error cuz body is not a valid string")
 
     def test_resp_headers(self):
         oauth2.set_response(self.request, self.response, 200, {

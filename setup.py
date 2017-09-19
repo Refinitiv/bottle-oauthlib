@@ -3,7 +3,7 @@ from os import path
 import inspect
 
 
-with open(path.join(path.dirname(path.abspath(inspect.getfile(inspect.currentframe()))), "requirements.txt")) as fd:
+with open(path.join(path.dirname(path.abspath(inspect.getfile(inspect.currentframe()))), "requirements.in")) as fd:
     dependencies = fd.read().split('\n')
 
 setup(

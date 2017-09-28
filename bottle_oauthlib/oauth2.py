@@ -108,14 +108,19 @@ def set_response(bottle_request, bottle_response, status, headers, body):
 
 
 class BottleOAuth2(object):
-    def __init__(self, bottle_server, oauthlib_server):
+    def __init__(self, bottle_server):
         self._bottle = bottle_server
+        self._oauthlib = None
+
+    def initialize(self, oauthlib_server):
         self._oauthlib = oauthlib_server
 
     def create_token_response(self, credentials=None):
         def decorator(f):
             @functools.wraps(f)
             def wrapper():
+                assert self._oauthlib, "BottleOAuth2 not initialized with OAuthLib"
+
                 # Get the list of scopes
                 try:
                     credentials_extra = credentials(bottle.request)
@@ -136,6 +141,8 @@ class BottleOAuth2(object):
         def decorator(f):
             @functools.wraps(f)
             def wrapper():
+                assert self._oauthlib, "BottleOAuth2 not initialized with OAuthLib"
+
                 # Get the list of scopes
                 try:
                     scopes_list = scopes(bottle.request)
@@ -165,6 +172,8 @@ class BottleOAuth2(object):
         def decorator(f):
             @functools.wraps(f)
             def wrapper():
+                assert self._oauthlib, "BottleOAuth2 not initialized with OAuthLib"
+
                 uri, http_method, body, headers = extract_params(bottle.request)
                 try:
                     scopes, credentials = self._oauthlib.validate_authorization_request(
@@ -197,6 +206,8 @@ class BottleOAuth2(object):
         def decorator(f):
             @functools.wraps(f)
             def wrapper():
+                assert self._oauthlib, "BottleOAuth2 not initialized with OAuthLib"
+
                 raise Exception("not implemented")
             return wrapper
         return decorator

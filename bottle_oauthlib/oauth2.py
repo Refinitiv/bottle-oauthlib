@@ -165,14 +165,13 @@ class BottleOAuth2(object):
         def decorator(f):
             @functools.wraps(f)
             def wrapper():
-                uri, http_method, body, headers = extract_params()
-                raise Exception("not implemented")
-
+                uri, http_method, body, headers = extract_params(bottle.request)
                 try:
                     scopes, credentials = self._oauthlib.validate_authorization_request(
                         uri, http_method, body, headers
                     )
                     redirect_uri = credentials["redirect_uri"]  # ok ?
+
                 except FatalClientError as e:
                     log.debug('Fatal client error %r', e, exc_info=True)
                     return bottle.redirect(e.in_uri(self.error_uri))

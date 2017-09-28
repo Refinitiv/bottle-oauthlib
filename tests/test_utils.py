@@ -14,6 +14,7 @@ class extract_params_auth(unittest.TestCase):
         self.request = AttrDict({
             "method": "GET",
             "url": "/sample_url",
+            "content_type": "application/x-www-form-urlencoded; charset=utf-8",
             "headers": {
                 "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
             },
@@ -100,7 +101,7 @@ class extract_params_auth(unittest.TestCase):
         """POSTed body is not a forms, so we need to decode authorization
         ourselves.
         """
-        self.request.headers["Content-Type"] = "text/html"
+        self.request.content_type = self.request.headers["Content-Type"] = "text/html"
         self.request.body = "<html>"
         self.request.auth = ("foobar", "barsecret")
         _, _, body, headers = oauth2.extract_params(self.request)
@@ -113,7 +114,7 @@ class extract_params_auth(unittest.TestCase):
         self.assertEqual(client_secret, "barsecret")
 
     def test_bearer_html(self):
-        self.request.headers["Content-Type"] = "text/html"
+        self.request.content_type = self.request.headers["Content-Type"] = "text/html"
         self.request.headers["Authorization"] = "Bearer myfootoken"
         self.request.body = "<html>"
         _, _, body, headers = oauth2.extract_params(self.request)
@@ -121,7 +122,7 @@ class extract_params_auth(unittest.TestCase):
         self.assertEqual(body, "<html>")
 
     def test_bearer_form(self):
-        self.request.headers["Content-Type"] = "application/x-www-form-urlencoded"
+        self.request.content_type = self.request.headers["Content-Type"] = "application/x-www-form-urlencoded"
         self.request.headers["Authorization"] = "Bearer myfootoken"
         self.request.forms = {
             "foo": "bar",

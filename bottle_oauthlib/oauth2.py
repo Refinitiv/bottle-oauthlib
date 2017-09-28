@@ -29,7 +29,7 @@ def extract_params(bottle_request):
     # this returns (None, None) for Bearer Token.
     username, password = bottle_request.auth if bottle_request.auth else (None, None)
 
-    if "application/x-www-form-urlencoded" in bottle_request.headers["Content-Type"]:
+    if "application/x-www-form-urlencoded" in bottle_request.content_type:
         client = {}
         if username is not None:
             client["client_id"] = username

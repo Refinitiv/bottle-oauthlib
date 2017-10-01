@@ -71,8 +71,6 @@ def set_response(bottle_request, bottle_response, status, headers, body):
     """
     if not isinstance(headers, dict):
         raise TypeError("a dict-like object is required, not {0}".format(type(headers)))
-    if not isinstance(body, str):
-        raise TypeError("a str-like object is required, not {0}".format(type(body)))
 
     bottle_response.status = status
     for k, v in headers.items():
@@ -86,6 +84,12 @@ def set_response(bottle_request, bottle_response, status, headers, body):
     requests-oauthlib: send Accept:application/json but work with both
     responses types.
     """
+    if not body:
+        return
+
+    if not isinstance(body, str):
+        raise TypeError("a str-like object is required, not {0}".format(type(body)))
+
     try:
         values = json.loads(body)
     except json.decoder.JSONDecodeError:
@@ -176,10 +180,11 @@ class BottleOAuth2(object):
 
                 uri, http_method, body, headers = extract_params(bottle.request)
                 try:
-                    scopes, credentials = self._oauthlib.validate_authorization_request(
+                    scopes, request_info = self._oauthlib.validate_authorization_request(
                         uri, http_method, body, headers
                     )
-                    redirect_uri = credentials["redirect_uri"]  # ok ?
+
+                    redirect_uri = request_info["redirect_uri"]
 
                 except FatalClientError as e:
                     log.debug('Fatal client error %r', e, exc_info=True)
@@ -195,19 +200,32 @@ class BottleOAuth2(object):
 
                 # For convenient parameter access in the view
                 add_params(bottle.request, {
-                    'credentials': credentials,
+                    'request_info': request_info,
                     'scopes': scopes
                 })
                 return f()
             return wrapper
         return decorator
 
-    def create_authorization_response(self):
+    def create_authorization_response(self, scopes=None):
         def decorator(f):
             @functools.wraps(f)
             def wrapper():
                 assert self._oauthlib, "BottleOAuth2 not initialized with OAuthLib"
+                uri, http_method, body, headers = extract_params(bottle.request)
+                status = 200
+                try:
+                    scope = scopes(bottle.request)
+                    res_headers, res_body, res_status = self._oauthlib.create_authorization_response(
+                        uri, http_method=http_method, body=body, headers=headers, scopes=scope
+                    )
+                    res = f()
+                    if not res:
+                        return bottle.HTTPResponse(status=res_status, body=res_body, headers=res_headers)
 
-                raise Exception("not implemented")
+                except Exception as e:
+                    log.exception(e)
+
+                return bottle.response
             return wrapper
         return decorator

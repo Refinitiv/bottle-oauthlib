@@ -229,3 +229,19 @@ class BottleOAuth2(object):
                 return bottle.response
             return wrapper
         return decorator
+
+    def validate_session_cookie(self, login_uri=None):
+        def decorator(f):
+            @functools.wraps(f)
+            def wrapper():
+                assert self._oauthlib, "BottleOAuth2 not initialized with OAuthLib"
+                if login_uri:
+                    # Check if ipdp is present. If no => redirect to given login url
+                    ipdp = bottle.request.get_cookie("iPlanetDirectoryPro")
+                    from urllib.parse import quote_plus
+                    log.debug(f"iPlanetDirectoryPro Cookie: {ipdp}")
+                    if not ipdp:
+                        return bottle.redirect(login_uri + "?redirect_after_login_uri=" + quote_plus(bottle.request.url), 302)
+                return f()
+            return wrapper
+        return decorator

@@ -138,15 +138,15 @@ class add_params(unittest.TestCase):
         self.request = AttrDict()
 
     def test_none(self):
-        oauth2.add_params(self.request, None)
+        oauth2.add_params_to_request(self.request, None)
         self.assertIn("oauth", self.request)
 
     def test_empty(self):
-        oauth2.add_params(self.request, {})
+        oauth2.add_params_to_request(self.request, {})
         self.assertIn("oauth", self.request)
 
     def test_simple(self):
-        oauth2.add_params(self.request, {
+        oauth2.add_params_to_request(self.request, {
             "foo": "bar",
             "lot": {
                 "of": "things",

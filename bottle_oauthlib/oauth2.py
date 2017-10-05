@@ -53,7 +53,7 @@ def extract_params(bottle_request):
         dict(bottle_request.headers, **basic_auth)
 
 
-def add_params(bottle_request, params):
+def add_params_to_request(bottle_request, params):
     try:
         bottle_request.oauth
     except AttributeError:
@@ -159,7 +159,7 @@ class BottleOAuth2(object):
                     uri, http_method, body, headers, scopes_list)
 
                 # For convenient parameter access in the view
-                add_params(bottle.request, {
+                add_params_to_request(bottle.request, {
                     'client': r.client,
                     'user': r.user,
                     'scopes': r.scopes
@@ -199,7 +199,7 @@ class BottleOAuth2(object):
                     ))
 
                 # For convenient parameter access in the view
-                add_params(bottle.request, {
+                add_params_to_request(bottle.request, {
                     'request_info': request_info,
                     'scopes': scopes
                 })

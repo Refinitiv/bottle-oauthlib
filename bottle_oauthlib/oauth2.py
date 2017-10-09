@@ -154,9 +154,7 @@ class BottleOAuth2(object):
                     scopes_list = scopes
 
                 uri, http_method, body, headers = extract_params(bottle.request)
-
-                valid, r = self._oauthlib.verify_request(
-                    uri, http_method, body, headers, scopes_list)
+                valid, r = self._oauthlib.verify_request(uri, http_method, body, headers, scopes_list)
 
                 # For convenient parameter access in the view
                 add_params_to_request(bottle.request, {

@@ -175,9 +175,13 @@ class set_response(unittest.TestCase):
         with self.assertRaises(TypeError, msg="must raise an error cuz headers is not a valid dict"):
             oauth2.set_response(self.request, self.response, 200, "string", "body")
 
+    def test_no_body(self):
+        oauth2.set_response(self.request, self.response, 200, {}, None)
+        self.assertEqual(self.response.body, '')
+
     def test_wrong_body(self):
         with self.assertRaises(TypeError, msg="must raise an error cuz body is not a valid string"):
-            oauth2.set_response(self.request, self.response, 200, {}, {})
+            oauth2.set_response(self.request, self.response, 200, {}, {"x": 42})
 
     def test_resp_headers(self):
         oauth2.set_response(self.request, self.response, 200, {

@@ -1,6 +1,7 @@
 from setuptools import setup
-from os import path,getenv
+from os import path, getenv
 import inspect
+
 
 if getenv("PATCH_VERSION"):
     patch = getenv("PATCH_VERSION")
@@ -20,5 +21,5 @@ setup(
     author_email="EikonEdge.Infra-Dev@thomsonreuters.com",
     packages=['bottle_oauthlib'],
     install_requires=dependencies,
-    #tests_require=dependencies,
+    test_suite='tests'
 )

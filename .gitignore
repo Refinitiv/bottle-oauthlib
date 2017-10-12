@@ -5,5 +5,9 @@ build
 *.egg-info
 *,cover
 dist
-htmlcov
+htmlcov*
 venv
+.tox
+.#*
+**/#*#
+*~

@@ -211,7 +211,6 @@ class BottleOAuth2(object):
             def wrapper():
                 assert self._oauthlib, "BottleOAuth2 not initialized with OAuthLib"
                 uri, http_method, body, headers = extract_params(bottle.request)
-                status = 200
                 try:
                     scope = scopes(bottle.request)
                     res_headers, res_body, res_status = self._oauthlib.create_authorization_response(
@@ -221,8 +220,13 @@ class BottleOAuth2(object):
                     if not res:
                         return bottle.HTTPResponse(status=res_status, body=res_body, headers=res_headers)
 
+                except FatalClientError as e:
+                    log.debug('Fatal client error %r', e, exc_info=True)
+                    return bottle.HTTPResponse(status=400, body={'error': str(e)})
+
                 except Exception as e:
-                    log.exception(e)
+                    log.error(e)
+                    return bottle.HTTPResponse(status=500, body={'error': str(e)})
 
                 return bottle.response
             return wrapper

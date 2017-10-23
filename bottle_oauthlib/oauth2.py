@@ -222,7 +222,10 @@ class BottleOAuth2(object):
 
                 except FatalClientError as e:
                     log.debug('Fatal client error %r', e, exc_info=True)
-                    return bottle.HTTPResponse(status=400, body={'error': str(e)})
+                    import urllib.parse as urlparse
+                    parsed_url = urlparse.parse_qs(urlparse.urlparse(uri).query)
+                    location_url = parsed_url['redirect_uri'][0] + e.in_uri('')
+                    return bottle.HTTPResponse(status=302, headers={'Location': location_url})
 
                 except Exception as e:
                     log.error(e)

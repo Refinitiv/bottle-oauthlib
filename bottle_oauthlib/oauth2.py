@@ -131,7 +131,7 @@ class BottleOAuth2(object):
             def wrapper():
                 assert self._oauthlib, "BottleOAuth2 not initialized with OAuthLib"
 
-                # Get the list of scopes
+                # Get any additional creds
                 try:
                     credentials_extra = credentials(bottle.request)
                 except TypeError:

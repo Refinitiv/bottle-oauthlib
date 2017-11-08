@@ -63,7 +63,7 @@ def add_params_to_request(bottle_request, params):
             bottle_request.oauth[k] = v
 
 
-def set_response(bottle_request, bottle_response, status, headers, body):
+def set_response(bottle_request, bottle_response, status, headers, body, force_json=False):
     """Set status/headers/body into bottle_response.
 
     Headers is a dict
@@ -78,6 +78,9 @@ def set_response(bottle_request, bottle_response, status, headers, body):
 
     """Determine if response should be in json or not, based on request:
     OAuth2.0 RFC recommands json, but older clients use form-urlencoded.
+
+    Note also that force_json can be set to be compliant with specific
+    endpoints like introspect, which always returns json.
 
     Examples:
     rauth: send Accept:*/* but work only with response in form-urlencoded.
@@ -97,12 +100,15 @@ def set_response(bottle_request, bottle_response, status, headers, body):
         bottle_response.body = body
     else:  # consider body as JSON
         # request want a json as response
-        if "Accept" in bottle_request.headers and "application/json" == bottle_request.headers["Accept"]:
+        if force_json is True or (
+                "Accept" in bottle_request.headers and
+                "application/json" == bottle_request.headers["Accept"]):
+            bottle_response["Content-Type"] = "application/json;charset=UTF-8"
             bottle_response.body = body
         else:
             from urllib.parse import quote
 
-            bottle_response["Content-Type"] = "application/x-www-form-urlencoded"
+            bottle_response["Content-Type"] = "application/x-www-form-urlencoded;charset=UTF-8"
             bottle_response.body = "&".join([
                 "{0}={1}".format(
                     quote(k) if isinstance(k, str) else k,

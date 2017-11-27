@@ -2,10 +2,8 @@
 omit =
         .tox/*
         tests/*
-        tests_integration/*
 
 [report]
 omit =
         .tox/*
         tests/*
-        tests_integration/*

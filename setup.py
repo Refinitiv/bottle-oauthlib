@@ -17,7 +17,7 @@ setup(
     name='bottle-oauthlib',
     version=packageVersion,
     description='Bottle OAuth2.0 OAuthLib server implementation',
-    license='BSD-2-Clause',
+    license='BSD-3-Clause',
     author="Thomson Reuters",
     author_email="EikonEdge.Infra-Dev@thomsonreuters.com",
     packages=['bottle_oauthlib'],

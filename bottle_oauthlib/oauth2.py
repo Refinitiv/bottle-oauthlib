@@ -144,6 +144,7 @@ class BottleOAuth2(object):
                 func_response = f()
                 if not func_response:
                     return bottle.response
+                return func_response
             return wrapper
         return decorator
 
@@ -194,6 +195,7 @@ class BottleOAuth2(object):
                 func_response = f()
                 if not func_response:
                     return bottle.response
+                return func_response
             return wrapper
         return decorator
 

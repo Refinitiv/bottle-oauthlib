@@ -1,12 +1,7 @@
 import bottle
 from bottle_oauthlib import oauth2
+from tests import AttrDict
 import unittest
-
-
-class AttrDict(dict):
-    def __init__(self, *args, **kwargs):
-        super(AttrDict, self).__init__(*args, **kwargs)
-        self.__dict__ = self
 
 
 class extract_params_auth(unittest.TestCase):

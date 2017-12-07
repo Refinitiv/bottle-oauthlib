@@ -197,67 +197,20 @@ class BottleOAuth2(object):
             return wrapper
         return decorator
 
-    def validate_authorization_request(self):
-        def decorator(f):
-            @functools.wraps(f)
-            def wrapper():
-                assert self._oauthlib, "BottleOAuth2 not initialized with OAuthLib"
-
-                uri, http_method, body, headers = extract_params(bottle.request)
-                try:
-                    scopes, request_info = self._oauthlib.validate_authorization_request(
-                        uri, http_method, body, headers
-                    )
-
-                    redirect_uri = request_info["redirect_uri"]
-
-                except FatalClientError as e:
-                    log.debug('Fatal client error %r', e, exc_info=True)
-                    return bottle.redirect(e.in_uri(self.error_uri))
-                except OAuth2Error as e:
-                    log.debug('OAuth2Error: %r', e, exc_info=True)
-                    return bottle.redirect(e.in_uri(redirect_uri))
-                except Exception as e:
-                    log.exception(e)
-                    return bottle.redirect(add_params_to_uri(
-                        self.error_uri, {'error': str(e)}
-                    ))
-
-                # For convenient parameter access in the view
-                add_params_to_request(bottle.request, {
-                    'request_info': request_info,
-                    'scopes': scopes
-                })
-                return f()
-            return wrapper
-        return decorator
-
     def create_authorization_response(self, scopes=None):
         def decorator(f):
             @functools.wraps(f)
             def wrapper():
                 assert self._oauthlib, "BottleOAuth2 not initialized with OAuthLib"
                 uri, http_method, body, headers = extract_params(bottle.request)
-                try:
-                    scope = scopes(bottle.request)
-                    res_headers, res_body, res_status = self._oauthlib.create_authorization_response(
-                        uri, http_method=http_method, body=body, headers=headers, scopes=scope
-                    )
-                    res = f()
-                    if not res:
-                        return bottle.HTTPResponse(status=res_status, body=res_body, headers=res_headers)
 
-                except FatalClientError as e:
-                    log.debug('Fatal client error %r', e, exc_info=True)
-                    import urllib.parse as urlparse
-                    parsed_url = urlparse.parse_qs(urlparse.urlparse(uri).query)
-                    location_url = parsed_url['redirect_uri'][0] + e.in_uri('')
-                    return bottle.HTTPResponse(status=302, headers={'Location': location_url})
-
-                except Exception as e:
-                    log.error(e)
-                    return bottle.HTTPResponse(status=500, body={'error': str(e)})
-
+                scope = scopes(bottle.request)
+                res_headers, res_body, res_status = self._oauthlib.create_authorization_response(
+                    uri, http_method=http_method, body=body, headers=headers, scopes=scope
+                )
+                res = f()
+                if not res:
+                    return bottle.HTTPResponse(status=res_status, body=res_body, headers=res_headers)
                 return bottle.response
             return wrapper
         return decorator

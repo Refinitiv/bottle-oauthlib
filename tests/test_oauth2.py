@@ -29,14 +29,6 @@ class test_not_initialized(ServerTestBase):
         with self.assertRaises(AssertionError):
             test()
 
-    def test_validate_authorization_request(self):
-        @bottle.route('/foo')
-        @self.oauth.validate_authorization_request()
-        def test(): return 'bar'
-
-        with self.assertRaises(AssertionError):
-            test()
-
     def test_create_authorization_response(self):
         @bottle.route('/foo')
         @self.oauth.create_authorization_response()

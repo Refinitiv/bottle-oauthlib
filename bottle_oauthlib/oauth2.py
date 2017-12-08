@@ -135,14 +135,17 @@ class BottleOAuth2(object):
                 except TypeError:
                     credentials_extra = credentials
                 uri, http_method, body, headers = extract_params(bottle.request)
-                headers, body, status = self._oauthlib.create_token_response(
+
+                resp_headers, resp_body, resp_status = self._oauthlib.create_token_response(
                     uri, http_method, body, headers, credentials_extra
                 )
-                set_response(bottle.request, bottle.response, status, headers, body)
+                set_response(bottle.request, bottle.response, resp_status,
+                             resp_headers, resp_body)
+
                 func_response = f()
-                if not func_response:
-                    return bottle.response
-                return func_response
+                if func_response:
+                    return func_response
+                return bottle.response
             return wrapper
         return decorator
 
@@ -159,19 +162,19 @@ class BottleOAuth2(object):
                     scopes_list = scopes
 
                 uri, http_method, body, headers = extract_params(bottle.request)
-                valid, r = self._oauthlib.verify_request(uri, http_method, body, headers, scopes_list)
+                valid, req = self._oauthlib.verify_request(uri, http_method, body, headers, scopes_list)
 
                 # For convenient parameter access in the view
                 add_params_to_request(bottle.request, {
-                    'client': r.client,
-                    'user': r.user,
-                    'scopes': r.scopes
+                    'client': req.client,
+                    'user': req.user,
+                    'scopes': req.scopes
                 })
                 if valid:
                     return f()
-                else:
-                    # Framework specific HTTP 403
-                    return HTTPError(403, "Permission denied")
+
+                # Framework specific HTTP 403
+                return HTTPError(403, "Permission denied")
             return wrapper
         return decorator
 
@@ -182,18 +185,17 @@ class BottleOAuth2(object):
                 assert self._oauthlib, "BottleOAuth2 not initialized with OAuthLib"
 
                 uri, http_method, body, headers = extract_params(bottle.request)
-                headers, body, status = self._oauthlib.create_introspect_response(
-                    uri,
-                    http_method,
-                    body,
-                    headers
+
+                resp_headers, resp_body, resp_status = self._oauthlib.create_introspect_response(
+                    uri, http_method, body, headers
                 )
-                set_response(bottle.request, bottle.response, status, headers,
-                             body, force_json=True)
+                set_response(bottle.request, bottle.response, resp_status, resp_headers,
+                             resp_body, force_json=True)
+
                 func_response = f()
-                if not func_response:
-                    return bottle.response
-                return func_response
+                if func_response:
+                    return func_response
+                return bottle.response
             return wrapper
         return decorator
 

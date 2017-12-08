@@ -1,9 +1,11 @@
 [run]
 omit =
         .tox/*
-        tests/*
+        tests/bottle*y
+        tests/test*y
 
 [report]
 omit =
         .tox/*
-        tests/*
+        tests/bottle*y
+        tests/test*y

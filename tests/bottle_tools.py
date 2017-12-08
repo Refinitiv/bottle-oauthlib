@@ -108,11 +108,11 @@ def wsgistr(s):
         return s
 
 class ServerTestBase(unittest.TestCase):
-    def setUp(self):
+    def setUp(self, app=None):
         ''' Create a new Bottle app set it as default_app '''
         self.port = 8080
         self.host = 'localhost'
-        self.app = bottle.app.push()
+        self.app = bottle.app.push(app)
         self.wsgiapp = wsgiref.validate.validator(self.app)
 
     def urlopen(self, path, method='GET', post='', env=None, query=''):

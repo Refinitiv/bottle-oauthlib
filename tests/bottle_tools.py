@@ -115,7 +115,7 @@ class ServerTestBase(unittest.TestCase):
         self.app = bottle.app.push()
         self.wsgiapp = wsgiref.validate.validator(self.app)
 
-    def urlopen(self, path, method='GET', post='', env=None):
+    def urlopen(self, path, method='GET', post='', env=None, query=''):
         result = {'code':0, 'status':'error', 'header':{}, 'body':tob('')}
         def start_response(status, header, exc_info=None):
             result['code'] = int(status.split()[0])
@@ -130,7 +130,7 @@ class ServerTestBase(unittest.TestCase):
         wsgiref.util.setup_testing_defaults(env)
         env['REQUEST_METHOD'] = wsgistr(method.upper().strip())
         env['PATH_INFO'] = wsgistr(path)
-        env['QUERY_STRING'] = wsgistr('')
+        env['QUERY_STRING'] = wsgistr(query)
         if post:
             env['REQUEST_METHOD'] = 'POST'
             env['CONTENT_LENGTH'] = str(len(tob(post)))

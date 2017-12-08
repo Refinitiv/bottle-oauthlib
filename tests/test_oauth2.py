@@ -186,12 +186,13 @@ class test_create_authorization_decorators(ServerTestBase):
         def test(): return None
 
         with mock.patch("oauthlib.oauth2.Server.create_authorization_response", return_value=self.fake_response) as mocked:
-            app_response = self.urlopen("/foo")
+            app_response = self.urlopen("/foo", method="GET", query="scope=admin%20view%20write")
             self.assertEqual(app_response['code'], 200)
             self.assertEqual(app_response['status'], "FooOK")
             self.assertEqual(app_response['body'], tob("a=b&c=d"))
             self.assertEqual(app_response['header']['Content-Type'], "application/x-www-form-urlencoded")
         mocked.assert_called_once()
+        self.assertEqual(mocked.call_args[1]["scopes"], ['admin', 'view', 'write'])
 
     def test_override_response(self):
         @bottle.route('/foo')

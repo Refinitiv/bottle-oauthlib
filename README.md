@@ -3,16 +3,73 @@
 
 ## Context
 
-You want to implement your own OAuth2.0 provider implementation in python ? You're at the right place.
+Interested to implement your own OAuth2.0 provider in python ? You're at the right place.
 
 Combine the excellent https://github.com/idan/oauthlib framework and the micro-framework https://github.com/bottlepy/bottle to provide OAuth2.0 authentication in only a couple of minutes.
 
+OAuth2.0 basic knowledge is more than welcomed ! However, for novices users, as a rule of thumb, you must understand the OAuth2.0 is a delegation protocol. Basically, it delegates authentication (credentials) and authorization (scopes) to an application (client).
 
+Note that you can use this project to implement the delegation part or the authorization server or the applications, or all combined. That's your choice.
+
+For more information about OAuth2.0 fundamentals, check https://oauth.net/2/
 
 ## Quick start
 
+Define rules into a oauthlib.RequestValidator class. See [oauthlib#implement-a-validator](https://oauthlib.readthedocs.io/en/latest/oauth2/server.html#implement-a-validator):
+```
+class MyOAuth2_Validator(oauth2.RequestValidator):
+    def authenticate_client_id(self, client_id, ..):
+        """validate client_id"""
 
-TBC
+    def validate_user(self, username, password, client, ..):
+        """validate username & password"""
+
+    def validate_scopes(self, client_id, scopes, ..):
+        """validate scope against the client"""
+
+    (..)
+```
+
+Link it to a preconfigured `oauthlib` Server, then to a `bottle` app: 
+
+```
+import bottle
+from bottle_oauthlib import BottleOAuth2
+from oauthlib import oauth2
+
+validator = MyOAuth2_Validator()
+server = oauth2.Server(validator)
+
+app = bottle.Bottle()
+app.auth = BottleOAuth2()
+app.auth.initialize(server)
+```
+
+Finally, declare `bottle` endpoints to request token:
+```
+@app.post('/token')
+@app.auth.create_token_response()
+def token():
+    """an empty controller is enough for most cases"""
+```
+
+In addition, you can declare a _resource_ endpoint which verify a token and its optional scopes:
+```
+@app.get('/calendar')
+@app.auth.verify_request(scopes=['calendar'])
+def access_calendar():
+    return "Welcome {}, you have permissioned {} to use your calendar".format(
+        bottle.request.oauth["user"],
+        bottle.request.oauth["client"].client_id
+    )
+```
+
+See the full example in our code source at [quickstart.py](https://github.com/thomsonreuters/bottle-oauthlib/blobl/master/tests/examples/quickstart.py). Don't hesitate to copy it for your own project and its own unit tests at [test_quickstart.py](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/tests/test_quickstart.py) to be confident in your updates.
+
+
+## Help & support
+
+Feel free to ask question or support by opening a Github issue https://github.com/thomsonreuters/bottle-oauthlib/issues. Don't hesitate to propose PR, they will be taken in consideration.
 
 
 ## Copyright

@@ -16,7 +16,7 @@ with open(path.join(path.dirname(path.abspath(inspect.getfile(inspect.currentfra
 setup(
     name='bottle-oauthlib',
     version=packageVersion,
-    description='Bottle OAuth2.0 OAuthLib server implementation',
+    description='Bottle plugin for OAuthLib framework (OAuth2.0)',
     license='BSD-3-Clause',
     author="Thomson Reuters",
     author_email="EikonEdge.Infra-Dev@thomsonreuters.com",

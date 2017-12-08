@@ -197,20 +197,23 @@ class BottleOAuth2(object):
             return wrapper
         return decorator
 
-    def create_authorization_response(self, scopes=None):
+    def create_authorization_response(self):
         def decorator(f):
             @functools.wraps(f)
             def wrapper():
                 assert self._oauthlib, "BottleOAuth2 not initialized with OAuthLib"
-                uri, http_method, body, headers = extract_params(bottle.request)
 
-                scope = scopes(bottle.request)
-                res_headers, res_body, res_status = self._oauthlib.create_authorization_response(
+                uri, http_method, body, headers = extract_params(bottle.request)
+                scope = bottle.request.params.get('scope', '').split(' ')
+
+                resp_headers, resp_body, resp_status = self._oauthlib.create_authorization_response(
                     uri, http_method=http_method, body=body, headers=headers, scopes=scope
                 )
-                res = f()
-                if not res:
-                    return bottle.HTTPResponse(status=res_status, body=res_body, headers=res_headers)
+                set_response(bottle.request, bottle.response, resp_status, resp_headers, resp_body)
+
+                func_response = f()
+                if func_response:
+                    return func_response
                 return bottle.response
             return wrapper
         return decorator

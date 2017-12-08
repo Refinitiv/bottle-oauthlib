@@ -167,3 +167,41 @@ class test_create_introspect_decorators(ServerTestBase):
             self.assertEqual(app_response['header']['Content-Type'], "application/json")
         mocked.assert_called_once()
  
+
+class test_create_authorization_decorators(ServerTestBase):
+    def setUp(self):
+        super().setUp()
+        self.oauth = BottleOAuth2(self.app)
+        self.validator = mock.MagicMock()
+        self.server = Server(self.validator)
+        self.oauth.initialize(self.server)
+
+        self.fake_response = ({
+            "Content-Type": "application/x-www-form-urlencoded"
+        }, "a=b&c=d", "200 FooOK")
+
+    def test_valid_response(self):
+        @bottle.route('/foo')
+        @self.oauth.create_authorization_response()
+        def test(): return None
+
+        with mock.patch("oauthlib.oauth2.Server.create_authorization_response", return_value=self.fake_response) as mocked:
+            app_response = self.urlopen("/foo")
+            self.assertEqual(app_response['code'], 200)
+            self.assertEqual(app_response['status'], "FooOK")
+            self.assertEqual(app_response['body'], tob("a=b&c=d"))
+            self.assertEqual(app_response['header']['Content-Type'], "application/x-www-form-urlencoded")
+        mocked.assert_called_once()
+
+    def test_override_response(self):
+        @bottle.route('/foo')
+        @self.oauth.create_authorization_response()
+        def test(): return "my=custom&body="
+
+        with mock.patch("oauthlib.oauth2.Server.create_authorization_response", return_value=self.fake_response) as mocked:
+            app_response = self.urlopen("/foo")
+            self.assertEqual(app_response['code'], 200)
+            self.assertEqual(app_response['status'], "FooOK")
+            self.assertEqual(app_response['body'], tob("my=custom&body="))
+            self.assertEqual(app_response['header']['Content-Type'], "application/x-www-form-urlencoded")
+        mocked.assert_called_once()

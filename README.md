@@ -64,7 +64,7 @@ def access_calendar():
     )
 ```
 
-See the full example in our code source at [quickstart.py](https://github.com/thomsonreuters/bottle-oauthlib/blobl/master/tests/examples/quickstart.py). Don't hesitate to copy it for your own project and its own unit tests at [test_quickstart.py](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/tests/test_quickstart.py) to be confident in your updates.
+See the full example in our code source at [quickstart.py](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/tests/examples/quickstart.py). Don't hesitate to copy it for your own project and its own unit tests at [test_quickstart.py](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/tests/test_quickstart.py) to be confident in your updates.
 
 
 ## Help & support

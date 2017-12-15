@@ -22,11 +22,11 @@ However, in order to be merged into the core, we suggest to be PEP8 compliant, a
 
 ## Code of conduct
 
-Every users and developers must agree on [Code of conduct](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/CODE_OF_CONDUCT.md). Note that it follows the [Contributor Covenant](https://www.contributor-covenant.org) principles.
+Every users and developers must agree on the [Code of conduct](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/CODE_OF_CONDUCT.md). Note that it follows the [Contributor Covenant](https://www.contributor-covenant.org) principles.
 
 ## License Agreement
 
-Before contributing, you must sign a license agreement. We're reusing a template from the awesome [Harmony Agreements](http://harmonyagreements.org/) document which is already used by many Open Source projects and communities. You can download the [Entity](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/CONTRIBUTING_Entity_Agreement.pdf) or [Individual Agreement](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/CONTRIBUTING_Individual_Agreement.pdf) and you can send it back to EikonEdge.Infra-Dev < at > thomsonreuters < dot > com.
+Before contributing, you must sign a license agreement. We're using a template from the awesome [Harmony Agreements](http://harmonyagreements.org/) which is already used by many Open Source projects and communities. You must download the [Entity](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/CONTRIBUTING_Entity_Agreement.pdf) or [Individual Agreement](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/CONTRIBUTING_Individual_Agreement.pdf) and send it back to EikonEdge.Infra-Dev < at > thomsonreuters < dot > com.
 
 ## Support & Contact us
 

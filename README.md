@@ -69,7 +69,12 @@ See the full example in our code source at [quickstart.py](https://github.com/th
 
 ## Help & support
 
-Feel free to ask question or support by opening a Github issue https://github.com/thomsonreuters/bottle-oauthlib/issues. Don't hesitate to propose PR, they will be taken in consideration.
+Feel free to ask question or support by opening a Github issue https://github.com/thomsonreuters/bottle-oauthlib/issues.
+
+
+## Contribution
+
+Don't hesitate to propose PR, they are more than welcomed. Please, be sure you're compliant with our [Contribution guide](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/CONTRIBUTING.md).
 
 
 ## Copyright

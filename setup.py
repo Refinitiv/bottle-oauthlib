@@ -3,19 +3,12 @@ from os import path, getenv
 import inspect
 
 
-if getenv("PATCH_VERSION"):
-    patch = getenv("PATCH_VERSION")
-else:
-    patch = "1"
-
-packageVersion = ("1.0.{}".format(patch))
-
 with open(path.join(path.dirname(path.abspath(inspect.getfile(inspect.currentframe()))), "requirements.in")) as fd:
     dependencies = fd.read().split('\n')
 
 setup(
     name='bottle-oauthlib',
-    version=packageVersion,
+    version='1.0.1',
     description='Bottle plugin for OAuthLib framework (OAuth2.0)',
     license='BSD-3-Clause',
     author="Thomson Reuters",

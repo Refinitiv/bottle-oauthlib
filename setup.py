@@ -19,7 +19,7 @@ setup(
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD-2-Clause',
+        'License :: OSI Approved :: BSD License',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
         'Programming Language :: Python :: 3.6',
     ]

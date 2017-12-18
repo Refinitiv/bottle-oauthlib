@@ -1,5 +1,6 @@
 # bottle-oauthlib
 
+![Jenkins build](https://api.travis-ci.org/thomsonreuters/bottle-oauthlib.svg?branch=master)
 
 ## Context
 

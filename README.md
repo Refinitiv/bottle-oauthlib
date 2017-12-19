@@ -76,7 +76,7 @@ Feel free to ask question or support by opening a Github issue https://github.co
 
 ## Contribution
 
-Don't hesitate to propose PR, they are more than welcomed. Please, be sure you're compliant with our [Contribution guide](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/CONTRIBUTING.md).
+Don't hesitate to propose PR, they are more than welcomed. Please, be sure you're compliant with our [Contribution guide](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/docs/CONTRIBUTING.md).
 
 
 ## Copyright

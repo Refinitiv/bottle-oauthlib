@@ -10,6 +10,7 @@ setup(
     name='bottle-oauthlib',
     version='1.0.1',
     description='Bottle adapter for OAuthLib framework (OAuth2.0)',
+    url='https://github.com/thomsonreuters/bottle-oauthlib',
     license='BSD-3-Clause',
     author="Thomson Reuters",
     author_email="EikonEdge.Infra-Dev@thomsonreuters.com",

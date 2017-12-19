@@ -19,7 +19,7 @@ For more information about OAuth2.0 fundamentals, check https://oauth.net/2/
 ## Quick start
 
 Define rules into a oauthlib.RequestValidator class. See [oauthlib#implement-a-validator](https://oauthlib.readthedocs.io/en/latest/oauth2/server.html#implement-a-validator):
-```
+```python
 class MyOAuth2_Validator(oauth2.RequestValidator):
     def authenticate_client_id(self, client_id, ..):
         """validate client_id"""
@@ -35,7 +35,7 @@ class MyOAuth2_Validator(oauth2.RequestValidator):
 
 Link it to a preconfigured `oauthlib` Server, then to a `bottle` app: 
 
-```
+```python
 import bottle
 from bottle_oauthlib import BottleOAuth2
 from oauthlib import oauth2
@@ -49,7 +49,7 @@ app.auth.initialize(server)
 ```
 
 Finally, declare `bottle` endpoints to request token:
-```
+```python
 @app.post('/token')
 @app.auth.create_token_response()
 def token():
@@ -57,7 +57,7 @@ def token():
 ```
 
 In addition, you can declare a _resource_ endpoint which verify a token and its optional scopes:
-```
+```python
 @app.get('/calendar')
 @app.auth.verify_request(scopes=['calendar'])
 def access_calendar():

@@ -1,16 +1,23 @@
 language: python
+sudo: false
+cache:
+- pip
 python:
 - '3.6'
+
 before_install:
 - pip install tox coveralls
 script:
 - tox
 after_success:
 - coveralls
+
 deploy:
   provider: pypi
   on:
     tags: true
+    python: 3.6
+  distributions: "sdist bdist_wheel"
   user: thomsonreuters-edge
   password:
     secure: QOME5T7zlZ0FMh6RxA1CauJ1H6jyMCf57irSWeQJp8KTf/5nH1sp5+EMwS5rbVGr46d7qp63C4foQkS6GBeub7BOfXs8iB9jyzx9RYthLdDenJ4EVExvjv08stlVgHkz8jk83IOJPwFKSozECNnyzjKw6PSLhwH6hdQdJrmIyYW3MCzLOh5jRBbVeORQcyGp7NL/WtRGpMIumXhePvsJ3Qh/uOAh69Kr2uQ7TtQSUYCeCOMvLNQGYQU7MFtR4FjNhyrvkY9UyeiG7mhCL22lZyiHC2iTKPMnaBBbHy2bYnBLziwIye+O1cJAdx8Mm8GzRz00bi96n3mJJY2vv4aQl2TeFR3zLcS3BJQC9h9ox9gD1byaa6RCfq2cjuhR1Epz6GGVka5PPRBBQi9W42gadZkqpB2mguLfT2xlSXyuKkoAgWaZZnhGw9/+J3YVAWPantUDkleHVulSwIrq/i3C60NrujOUAw8bY4OytW4UGQYrBxNFKMSmOd/c8GL/BwbUSRwAKuVwk4r90GlBBl1tLlJRMDnbL7VlZrWG0GidrEtrFO1HQUSDl/axaOGygb5k9Lw5Qt9JSiOKO302ZVmxOSEa/r2deO71zSLVPGHKKRf6jBprxIxTQYuXRjGBECyg1oEfWlGRphK5Gdo9mSSZLqONFROZj2Zqr+dx3Bd5NcY=

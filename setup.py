@@ -6,9 +6,15 @@ import inspect
 with open(path.join(path.dirname(path.abspath(inspect.getfile(inspect.currentframe()))), "requirements.in")) as fd:
     dependencies = fd.read().split('\n')
 
+try:
+    import os
+    version_tag = os.environ["TRAVIS_TAG"]
+except KeyError:
+    version_tag = "1.0.0"
+
 setup(
     name='bottle-oauthlib',
-    version='1.1.0',
+    version=version_tag,
     description='Bottle adapter for OAuthLib framework (OAuth2.0)',
     url='https://github.com/thomsonreuters/bottle-oauthlib',
     license='BSD-3-Clause',

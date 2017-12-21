@@ -1,6 +1,6 @@
 import bottle
 from bottle import tob
-from bottle_tools import ServerTestBase
+from tests.bottle_tools import ServerTestBase
 from bottle_oauthlib.oauth2 import BottleOAuth2
 from oauthlib.oauth2 import Server
 from tests import AttrDict
@@ -206,3 +206,27 @@ class test_create_authorization_decorators(ServerTestBase):
             self.assertEqual(app_response['body'], tob("my=custom&body="))
             self.assertEqual(app_response['header']['Content-Type'], "application/x-www-form-urlencoded")
         mocked.assert_called_once()
+
+
+class test_create_revocation_decorators(ServerTestBase):
+    def setUp(self):
+        super().setUp()
+        self.oauth = BottleOAuth2(self.app)
+        self.validator = mock.MagicMock()
+        self.server = Server(self.validator)
+        self.oauth.initialize(self.server)
+
+        self.fake_response = ({}, "", "200 fooOK")
+
+    def test_valid_response(self):
+        @bottle.route('/revoke')
+        @self.oauth.create_revocation_response()
+        def test(): return None
+
+        with mock.patch("oauthlib.oauth2.Server.create_revocation_response", return_value=self.fake_response) as mocked:
+            app_response = self.urlopen("/revoke")
+            self.assertEqual(app_response['code'], 200)
+            self.assertEqual(app_response['status'], "fooOK")
+        mocked.assert_called_once()
+
+

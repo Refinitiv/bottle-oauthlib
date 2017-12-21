@@ -1,6 +1,6 @@
 # bottle-oauthlib
 
-![Jenkins build](https://api.travis-ci.org/thomsonreuters/bottle-oauthlib.svg?branch=master)
+[![Jenkins build](https://api.travis-ci.org/thomsonreuters/bottle-oauthlib.svg?branch=master)](https://travis-ci.org/thomsonreuters/bottle-oauthlib)
 [![Coverage Status](https://coveralls.io/repos/github/thomsonreuters/bottle-oauthlib/badge.svg?branch=master)](https://coveralls.io/github/thomsonreuters/bottle-oauthlib?branch=master)
 [![pip install bottle-oauthlib](https://img.shields.io/pypi/v/bottle-oauthlib.svg)](https://pypi.python.org/pypi/bottle-oauthlib)
 

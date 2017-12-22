@@ -1,7 +1,6 @@
 import bottle
 from bottle import HTTPError
 import functools
-import logging
 import json
 from oauthlib.common import add_params_to_uri
 from oauthlib.oauth2 import FatalClientError
@@ -9,8 +8,6 @@ from oauthlib.oauth2 import OAuth2Error
 import requests
 import sys
 
-
-log = logging.getLogger(__name__)
 
 
 def extract_params(bottle_request):

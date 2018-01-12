@@ -90,14 +90,14 @@ def set_response(bottle_request, bottle_response, status, headers, body, force_j
     if not isinstance(body, str):
         raise TypeError("a str-like object is required, not {0}".format(type(body)))
 
-    log.debug(f"Creating bottle response from string body {body}...")
+    log.debug("Creating bottle response from string body %s...", body)
 
     try:
         values = json.loads(body)
     except json.decoder.JSONDecodeError:
         # consider body as string but not JSON, we stop here.
         bottle_response.body = body
-        log.debug(f"Body Bottle response body created as is :{bottle_response.body}")
+        log.debug("Body Bottle response body created as is: %", bottle_response.body)
     else:  # consider body as JSON
         # request want a json as response
         if force_json is True or (
@@ -105,7 +105,7 @@ def set_response(bottle_request, bottle_response, status, headers, body, force_j
                 "application/json" == bottle_request.headers["Accept"]):
             bottle_response["Content-Type"] = "application/json;charset=UTF-8"
             bottle_response.body = body
-            log.debug(f"Body Bottle response body created as json:{bottle_response.body}")
+            log.debug("Body Bottle response body created as json: %r", bottle_response.body)
         else:
             from urllib.parse import quote
 
@@ -116,7 +116,7 @@ def set_response(bottle_request, bottle_response, status, headers, body, force_j
                     quote(v) if isinstance(v, str) else v
                 ) for k, v in values.items()
             ])
-            log.debug(f"Body Bottle response body created as form-urlencoded:{bottle_response.body}")
+            log.debug("Body Bottle response body created as form-urlencoded: %r", bottle_response.body)
 
 
 class BottleOAuth2(object):

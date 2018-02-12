@@ -37,7 +37,7 @@ Link it to a preconfigured `oauthlib` Server, then to a `bottle` app:
 
 ```python
 import bottle
-from bottle_oauthlib import BottleOAuth2
+from bottle_oauthlib.oauth2 import BottleOAuth2
 from oauthlib import oauth2
 
 validator = MyOAuth2_Validator()

@@ -97,7 +97,7 @@ def set_response(bottle_request, bottle_response, status, headers, body, force_j
     except json.decoder.JSONDecodeError:
         # consider body as string but not JSON, we stop here.
         bottle_response.body = body
-        log.debug("Body Bottle response body created as is: %", bottle_response.body)
+        log.debug("Body Bottle response body created as is: %r", bottle_response.body)
     else:  # consider body as JSON
         # request want a json as response
         if force_json is True or (

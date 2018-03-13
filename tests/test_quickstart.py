@@ -1,5 +1,5 @@
 from bottle import tob
-from bottle_tools import ServerTestBase
+from .bottle_tools import ServerTestBase
 from tests.examples import quickstart
 import unittest
 from urllib.parse import unquote

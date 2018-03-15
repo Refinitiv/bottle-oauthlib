@@ -8,7 +8,7 @@
 
 Interested to implement your own OAuth2.0 provider in python ? You're at the right place.
 
-Combine the excellent https://github.com/idan/oauthlib framework and the micro-framework https://github.com/bottlepy/bottle to provide OAuth2.0 authentication in only a couple of minutes.
+Combine the excellent https://github.com/oauthlib/oauthlib framework and the micro-framework https://github.com/bottlepy/bottle to provide OAuth2.0 authentication in only a couple of minutes.
 
 OAuth2.0 basic knowledge is more than welcomed ! However, for novices users, as a rule of thumb, you must understand the OAuth2.0 is a delegation protocol. Basically, it delegates authentication (credentials) and authorization (scopes) to an application (client).
 

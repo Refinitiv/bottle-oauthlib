@@ -225,6 +225,21 @@ class test_create_authorization_decorators(ServerTestBase):
             )
         mocked.assert_called_once()
 
+    def test_fatal_error_no_page(self):
+        oauth = BottleOAuth2(self.app)
+        oauth.initialize(self.server)
+
+        @self.app.route('/fooh')
+        @oauth.create_authorization_response()
+        def test(): return None
+
+        with mock.patch("oauthlib.oauth2.Server.create_authorization_response",
+                        side_effect=oauthlib.oauth2.InvalidClientIdError()) as mocked:
+            app_response = self.urlopen("/fooh")
+            self.assertEqual(app_response['code'], 500, "error is not handled by BottleOAuth2")
+            self.assertNotIn('Location', app_response['header'])
+        mocked.assert_called_once()
+
 
 class test_create_revocation_decorators(ServerTestBase):
     def setUp(self):

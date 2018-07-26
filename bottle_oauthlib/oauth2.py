@@ -120,9 +120,10 @@ def set_response(bottle_request, bottle_response, status, headers, body, force_j
 
 
 class BottleOAuth2(object):
-    def __init__(self, bottle_server):
+    def __init__(self, bottle_server, error_uri=None):
         self._bottle = bottle_server
         self._oauthlib = None
+        self._error_uri = error_uri
 
     def initialize(self, oauthlib_server):
         self._oauthlib = oauthlib_server
@@ -212,9 +213,16 @@ class BottleOAuth2(object):
                 uri, http_method, body, headers = extract_params(bottle.request)
                 scope = bottle.request.params.get('scope', '').split(' ')
 
-                resp_headers, resp_body, resp_status = self._oauthlib.create_authorization_response(
-                    uri, http_method=http_method, body=body, headers=headers, scopes=scope
-                )
+                try:
+                    resp_headers, resp_body, resp_status = self._oauthlib.create_authorization_response(
+                        uri, http_method=http_method, body=body, headers=headers, scopes=scope
+                    )
+                except FatalClientError as e:
+                    if self._error_uri:
+                        raise bottle.HTTPResponse(status=302, headers={"Location": add_params_to_uri(
+                            self._error_uri, {'error': e.error, 'error_description': e.description}
+                        )})
+                    raise e
                 set_response(bottle.request, bottle.response, resp_status, resp_headers, resp_body)
 
                 func_response = f()

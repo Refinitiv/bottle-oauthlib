@@ -2,10 +2,11 @@ import bottle
 from bottle import tob
 from tests.bottle_tools import ServerTestBase
 from bottle_oauthlib.oauth2 import BottleOAuth2
+import oauthlib
 from oauthlib.oauth2 import Server
 from tests import AttrDict
-from unittest import mock
 import unittest
+from unittest import mock
 
 
 class test_not_initialized(ServerTestBase):
@@ -127,6 +128,7 @@ class test_create_decorators(ServerTestBase):
         mocked.assert_called_once()
 
 
+@unittest.skip("waitin' for oauthlib release of introspect support")
 class test_create_introspect_decorators(ServerTestBase):
     def setUp(self):
         super().setUp()
@@ -139,7 +141,6 @@ class test_create_introspect_decorators(ServerTestBase):
             "Content-Type": "application/json"
         }, "{'valid': true, 'foo': 'bar'}", "200 FooOK")
 
-    @unittest.skip("remove when introspect branch is merged into oauthlib")
     def test_valid_response(self):
         @bottle.route('/foo')
         @self.oauth.create_introspect_response()
@@ -153,7 +154,6 @@ class test_create_introspect_decorators(ServerTestBase):
             self.assertEqual(app_response['header']['Content-Type'], "application/x-www-form-urlencoded")
         mocked.assert_called_once()
 
-    @unittest.skip("remove when introspect branch is merged into oauthlib")
     def test_override_response(self):
         @bottle.route('/foo')
         @self.oauth.create_introspect_response()
@@ -166,12 +166,12 @@ class test_create_introspect_decorators(ServerTestBase):
             self.assertEqual(app_response['body'], tob("{'valid': false}"))
             self.assertEqual(app_response['header']['Content-Type'], "application/json")
         mocked.assert_called_once()
- 
+
 
 class test_create_authorization_decorators(ServerTestBase):
     def setUp(self):
         super().setUp()
-        self.oauth = BottleOAuth2(self.app)
+        self.oauth = BottleOAuth2(self.app, error_uri="/errorpage")
         self.validator = mock.MagicMock()
         self.server = Server(self.validator)
         self.oauth.initialize(self.server)
@@ -185,7 +185,8 @@ class test_create_authorization_decorators(ServerTestBase):
         @self.oauth.create_authorization_response()
         def test(): return None
 
-        with mock.patch("oauthlib.oauth2.Server.create_authorization_response", return_value=self.fake_response) as mocked:
+        with mock.patch("oauthlib.oauth2.Server.create_authorization_response",
+                        return_value=self.fake_response) as mocked:
             app_response = self.urlopen("/foo", method="GET", query="scope=admin%20view%20write")
             self.assertEqual(app_response['code'], 200)
             self.assertEqual(app_response['status'], "FooOK")
@@ -199,12 +200,29 @@ class test_create_authorization_decorators(ServerTestBase):
         @self.oauth.create_authorization_response()
         def test(): return "my=custom&body="
 
-        with mock.patch("oauthlib.oauth2.Server.create_authorization_response", return_value=self.fake_response) as mocked:
+        with mock.patch("oauthlib.oauth2.Server.create_authorization_response",
+                        return_value=self.fake_response) as mocked:
             app_response = self.urlopen("/foo")
             self.assertEqual(app_response['code'], 200)
             self.assertEqual(app_response['status'], "FooOK")
             self.assertEqual(app_response['body'], tob("my=custom&body="))
             self.assertEqual(app_response['header']['Content-Type'], "application/x-www-form-urlencoded")
+        mocked.assert_called_once()
+
+    def test_fatal_error(self):
+        @bottle.route('/foo')
+        @self.oauth.create_authorization_response()
+        def test(): return None
+
+        with mock.patch("oauthlib.oauth2.Server.create_authorization_response",
+                        side_effect=oauthlib.oauth2.InvalidClientIdError()) as mocked:
+            app_response = self.urlopen("/foo")
+            self.assertEqual(app_response['code'], 302)
+            self.assertEqual(app_response['status'], "Found")
+            self.assertEqual(
+                app_response['header']['Location'],
+                "/errorpage?error=invalid_request&error_description=Invalid+client_id+parameter+value."
+            )
         mocked.assert_called_once()
 
 
@@ -228,5 +246,3 @@ class test_create_revocation_decorators(ServerTestBase):
             self.assertEqual(app_response['code'], 200)
             self.assertEqual(app_response['status'], "fooOK")
         mocked.assert_called_once()
-
-

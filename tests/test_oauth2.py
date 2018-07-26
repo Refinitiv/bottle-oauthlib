@@ -15,7 +15,7 @@ class test_not_initialized(ServerTestBase):
         self.oauth = BottleOAuth2(self.app)
 
     def test_create_token_response(self):
-        @bottle.route('/foo')
+        @self.app.route('/foo')
         @self.oauth.create_token_response()
         def test(): return 'bar'
 
@@ -23,7 +23,7 @@ class test_not_initialized(ServerTestBase):
             test()
 
     def test_verify_request(self):
-        @bottle.route('/foo')
+        @self.app.route('/foo')
         @self.oauth.verify_request()
         def test(): return 'bar'
 
@@ -31,7 +31,7 @@ class test_not_initialized(ServerTestBase):
             test()
 
     def test_create_authorization_response(self):
-        @bottle.route('/foo')
+        @self.app.route('/foo')
         @self.oauth.create_authorization_response()
         def test(): return 'bar'
 
@@ -39,7 +39,7 @@ class test_not_initialized(ServerTestBase):
             test()
 
     def test_create_introspect_response(self):
-        @bottle.route('/foo')
+        @self.app.route('/foo')
         @self.oauth.create_introspect_response()
         def test(): return 'bar'
 
@@ -62,7 +62,7 @@ class test_verify_decorators(ServerTestBase):
         )
 
     def test_valid_request(self):
-        @bottle.route('/foo')
+        @self.app.route('/foo')
         @self.oauth.verify_request()
         def test():
             self.assertEqual(bottle.request.oauth['client'], 'foo')
@@ -78,7 +78,7 @@ class test_verify_decorators(ServerTestBase):
         mocked.assert_called_once()
 
     def test_invalid_request(self):
-        @bottle.route('/foo')
+        @self.app.route('/foo')
         @self.oauth.verify_request()
         def test():
             self.assertTrue(False, "must never be here")
@@ -102,7 +102,7 @@ class test_create_decorators(ServerTestBase):
         }, "a=b&c=d", "200 FooOK")
 
     def test_valid_response(self):
-        @bottle.route('/foo')
+        @self.app.route('/foo')
         @self.oauth.create_token_response()
         def test(): return None
 
@@ -115,7 +115,7 @@ class test_create_decorators(ServerTestBase):
         mocked.assert_called_once()
 
     def test_override_response(self):
-        @bottle.route('/foo')
+        @self.app.route('/foo')
         @self.oauth.create_token_response()
         def test(): return "my=custom&body="
 
@@ -142,7 +142,7 @@ class test_create_introspect_decorators(ServerTestBase):
         }, "{'valid': true, 'foo': 'bar'}", "200 FooOK")
 
     def test_valid_response(self):
-        @bottle.route('/foo')
+        @self.app.route('/foo')
         @self.oauth.create_introspect_response()
         def test(): return None
 
@@ -155,7 +155,7 @@ class test_create_introspect_decorators(ServerTestBase):
         mocked.assert_called_once()
 
     def test_override_response(self):
-        @bottle.route('/foo')
+        @self.app.route('/foo')
         @self.oauth.create_introspect_response()
         def test(): return "{'valid': false}"
 
@@ -181,7 +181,7 @@ class test_create_authorization_decorators(ServerTestBase):
         }, "a=b&c=d", "200 FooOK")
 
     def test_valid_response(self):
-        @bottle.route('/foo')
+        @self.app.route('/foo')
         @self.oauth.create_authorization_response()
         def test(): return None
 
@@ -196,7 +196,7 @@ class test_create_authorization_decorators(ServerTestBase):
         self.assertEqual(mocked.call_args[1]["scopes"], ['admin', 'view', 'write'])
 
     def test_override_response(self):
-        @bottle.route('/foo')
+        @self.app.route('/foo')
         @self.oauth.create_authorization_response()
         def test(): return "my=custom&body="
 
@@ -210,7 +210,7 @@ class test_create_authorization_decorators(ServerTestBase):
         mocked.assert_called_once()
 
     def test_fatal_error(self):
-        @bottle.route('/foo')
+        @self.app.route('/foo')
         @self.oauth.create_authorization_response()
         def test(): return None
 
@@ -252,7 +252,7 @@ class test_create_revocation_decorators(ServerTestBase):
         self.fake_response = ({}, "", "200 fooOK")
 
     def test_valid_response(self):
-        @bottle.route('/revoke')
+        @self.app.route('/revoke')
         @self.oauth.create_revocation_response()
         def test(): return None
 

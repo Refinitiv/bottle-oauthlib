@@ -1,13 +1,13 @@
 from setuptools import setup
-from os import path, getenv
 import inspect
+from os import path
+import os
 
 
 with open(path.join(path.dirname(path.abspath(inspect.getfile(inspect.currentframe()))), "requirements.in")) as fd:
     dependencies = fd.read().split('\n')
 
 try:
-    import os
     version_tag = os.environ["TRAVIS_TAG"]
 except KeyError:
     version_tag = "1.0.0"

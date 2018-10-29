@@ -12,7 +12,7 @@ class OAuth2_PasswordValidator(oauth2.RequestValidator):
             "clientB": ["calendar"]
     }
     """dict of username containing password"""
-    users_password  = {
+    users_password = {
         "john": "doe",
         "foo": "bar"
     }

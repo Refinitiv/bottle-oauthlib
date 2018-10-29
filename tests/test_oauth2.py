@@ -171,10 +171,10 @@ class test_create_introspect_decorators(ServerTestBase):
 class test_create_authorization_decorators(ServerTestBase):
     def setUp(self):
         super().setUp()
-        self.oauth = BottleOAuth2(self.app, error_uri="/errorpage")
+        self.oauth = BottleOAuth2(self.app)
         self.validator = mock.MagicMock()
         self.server = Server(self.validator)
-        self.oauth.initialize(self.server)
+        self.oauth.initialize(self.server, error_uri="/errorpage")
 
         self.fake_response = ({
             "Content-Type": "application/x-www-form-urlencoded"

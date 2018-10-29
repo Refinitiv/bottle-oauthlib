@@ -4,9 +4,7 @@ import functools
 import json
 from oauthlib.common import add_params_to_uri
 from oauthlib.oauth2 import FatalClientError
-from oauthlib.oauth2 import OAuth2Error
 import requests
-import sys
 import logging
 
 log = logging.getLogger(__name__)
@@ -120,12 +118,13 @@ def set_response(bottle_request, bottle_response, status, headers, body, force_j
 
 
 class BottleOAuth2(object):
-    def __init__(self, bottle_server, error_uri=None):
+    def __init__(self, bottle_server):
         self._bottle = bottle_server
+        self._error_uri = None
         self._oauthlib = None
-        self._error_uri = error_uri
 
-    def initialize(self, oauthlib_server):
+    def initialize(self, oauthlib_server, error_uri=None):
+        self._error_uri = error_uri
         self._oauthlib = oauthlib_server
 
     def create_token_response(self, credentials=None):

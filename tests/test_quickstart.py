@@ -75,7 +75,7 @@ class test_quickstart(ServerTestBase):
             "scope=mail",
         ]), env={'CONTENT_TYPE': "application/x-www-form-urlencoded"})
 
-        self.assertError(resp, 401, "invalid_grant&error_description=Invalid%20credentials")
+        self.assertError(resp, 400, "invalid_grant&error_description=Invalid%20credentials")
 
     def test_invalidpassword(self):
         resp = self.urlopen("/token", method="POST", post="&".join([
@@ -86,7 +86,7 @@ class test_quickstart(ServerTestBase):
             "scope=mail",
         ]), env={'CONTENT_TYPE': "application/x-www-form-urlencoded"})
 
-        self.assertError(resp, 401, "invalid_grant&error_description=Invalid%20credentials")
+        self.assertError(resp, 400, "invalid_grant&error_description=Invalid%20credentials")
 
     def fetchToken(self, client, username, password, scope):
         resp = self.urlopen("/token", method="POST", post="&".join([

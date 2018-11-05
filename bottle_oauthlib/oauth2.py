@@ -4,6 +4,7 @@ import functools
 import json
 from oauthlib.common import add_params_to_uri
 from oauthlib.oauth2 import FatalClientError
+from oauthlib.oauth2 import OAuth2Error
 import requests
 import logging
 
@@ -146,9 +147,12 @@ class BottleOAuth2(object):
                     credentials_extra = credentials
                 uri, http_method, body, headers = extract_params(bottle.request)
 
-                resp_headers, resp_body, resp_status = self._oauthlib.create_token_response(
-                    uri, http_method, body, headers, credentials_extra
-                )
+                try:
+                    resp_headers, resp_body, resp_status = self._oauthlib.create_token_response(
+                        uri, http_method, body, headers, credentials_extra
+                    )
+                except OAuth2Error as e:
+                    resp_headers, resp_body, resp_status = {}, e.json, e.status_code
                 set_response(bottle.request, bottle.response, resp_status,
                              resp_headers, resp_body)
 
@@ -196,9 +200,12 @@ class BottleOAuth2(object):
 
                 uri, http_method, body, headers = extract_params(bottle.request)
 
-                resp_headers, resp_body, resp_status = self._oauthlib.create_introspect_response(
-                    uri, http_method, body, headers
-                )
+                try:
+                    resp_headers, resp_body, resp_status = self._oauthlib.create_introspect_response(
+                        uri, http_method, body, headers
+                    )
+                except OAuth2Error as e:
+                    resp_headers, resp_body, resp_status = {}, e.json, e.status_code
                 set_response(bottle.request, bottle.response, resp_status, resp_headers,
                              resp_body, force_json=True)
 
@@ -228,6 +235,8 @@ class BottleOAuth2(object):
                             self._error_uri, {'error': e.error, 'error_description': e.description}
                         )})
                     raise e
+                except OAuth2Error as e:
+                    resp_headers, resp_body, resp_status = {}, e.json, e.status_code
                 set_response(bottle.request, bottle.response, resp_status, resp_headers, resp_body)
 
                 func_response = f()
@@ -245,9 +254,12 @@ class BottleOAuth2(object):
 
                 uri, http_method, body, headers = extract_params(bottle.request)
 
-                resp_headers, resp_body, resp_status = self._oauthlib.create_revocation_response(
-                    uri, http_method=http_method, body=body, headers=headers
-                )
+                try:
+                    resp_headers, resp_body, resp_status = self._oauthlib.create_revocation_response(
+                        uri, http_method=http_method, body=body, headers=headers
+                    )
+                except OAuth2Error as e:
+                    resp_headers, resp_body, resp_status = {}, e.json, e.status_code
 
                 set_response(bottle.request, bottle.response, resp_status, resp_headers, resp_body)
 

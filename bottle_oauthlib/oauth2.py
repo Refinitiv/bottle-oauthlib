@@ -37,14 +37,20 @@ def extract_params(bottle_request):
             dict(bottle_request.headers)
 
     basic_auth = {}
+    body = bottle_request.body
+
+    # TODO: Remove HACK of using body for GET requests. Use commented code below
+    # once https://github.com/oauthlib/oauthlib/issues/609 is fixed.
     if username is not None:
         basic_auth = {
             "Authorization": requests.auth._basic_auth_str(username, password)
         }
+        body = dict(client_id=username, client_secret=password)
+
     return \
         bottle_request.url, \
         bottle_request.method, \
-        bottle_request.body, \
+        body, \
         dict(bottle_request.headers, **basic_auth)
 
 

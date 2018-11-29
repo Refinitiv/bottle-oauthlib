@@ -137,7 +137,7 @@ class BottleOAuth2(object):
     def create_token_response(self, credentials=None):
         def decorator(f):
             @functools.wraps(f)
-            def wrapper():
+            def wrapper(*args, **kwargs):
                 assert self._oauthlib, "BottleOAuth2 not initialized with OAuthLib"
 
                 # Get any additional creds
@@ -156,7 +156,7 @@ class BottleOAuth2(object):
                 set_response(bottle.request, bottle.response, resp_status,
                              resp_headers, resp_body)
 
-                func_response = f()
+                func_response = f(*args, **kwargs)
                 if func_response:
                     return func_response
                 return bottle.response
@@ -166,7 +166,7 @@ class BottleOAuth2(object):
     def verify_request(self, scopes=None):
         def decorator(f):
             @functools.wraps(f)
-            def wrapper():
+            def wrapper(*args, **kwargs):
                 assert self._oauthlib, "BottleOAuth2 not initialized with OAuthLib"
 
                 # Get the list of scopes
@@ -185,7 +185,7 @@ class BottleOAuth2(object):
                     'scopes': req.scopes
                 })
                 if valid:
-                    return f()
+                    return f(*args, **kwargs)
 
                 # Framework specific HTTP 403
                 return HTTPError(403, "Permission denied")
@@ -195,7 +195,7 @@ class BottleOAuth2(object):
     def create_introspect_response(self):
         def decorator(f):
             @functools.wraps(f)
-            def wrapper():
+            def wrapper(*args, **kwargs):
                 assert self._oauthlib, "BottleOAuth2 not initialized with OAuthLib"
 
                 uri, http_method, body, headers = extract_params(bottle.request)
@@ -209,7 +209,7 @@ class BottleOAuth2(object):
                 set_response(bottle.request, bottle.response, resp_status, resp_headers,
                              resp_body, force_json=True)
 
-                func_response = f()
+                func_response = f(*args, **kwargs)
                 if func_response:
                     return func_response
                 return bottle.response
@@ -219,7 +219,7 @@ class BottleOAuth2(object):
     def create_authorization_response(self):
         def decorator(f):
             @functools.wraps(f)
-            def wrapper():
+            def wrapper(*args, **kwargs):
                 assert self._oauthlib, "BottleOAuth2 not initialized with OAuthLib"
 
                 uri, http_method, body, headers = extract_params(bottle.request)
@@ -239,7 +239,7 @@ class BottleOAuth2(object):
                     resp_headers, resp_body, resp_status = {}, e.json, e.status_code
                 set_response(bottle.request, bottle.response, resp_status, resp_headers, resp_body)
 
-                func_response = f()
+                func_response = f(*args, **kwargs)
                 if func_response:
                     return func_response
                 return bottle.response
@@ -249,7 +249,7 @@ class BottleOAuth2(object):
     def create_revocation_response(self):
         def decorator(f):
             @functools.wraps(f)
-            def wrapper():
+            def wrapper(*args, **kwargs):
                 assert self._oauthlib, "BottleOAuth2 not initialized with OAuthLib"
 
                 uri, http_method, body, headers = extract_params(bottle.request)
@@ -263,7 +263,7 @@ class BottleOAuth2(object):
 
                 set_response(bottle.request, bottle.response, resp_status, resp_headers, resp_body)
 
-                func_response = f()
+                func_response = f(*args, **kwargs)
                 if func_response:
                     return func_response
                 return bottle.response

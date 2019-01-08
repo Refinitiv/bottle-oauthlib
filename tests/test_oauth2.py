@@ -7,7 +7,6 @@ from oauthlib.oauth2 import Server
 from oauthlib.oauth2 import MetadataEndpoint
 from oauthlib.oauth2 import LegacyApplicationServer
 from tests import AttrDict
-import unittest
 from unittest import mock
 
 
@@ -130,7 +129,6 @@ class test_create_decorators(ServerTestBase):
         mocked.assert_called_once()
 
 
-@unittest.skip("waitin' for oauthlib release of introspect support")
 class test_create_introspect_decorators(ServerTestBase):
     def setUp(self):
         super().setUp()
@@ -152,8 +150,8 @@ class test_create_introspect_decorators(ServerTestBase):
             app_response = self.urlopen("/foo")
             self.assertEqual(app_response['code'], 200)
             self.assertEqual(app_response['status'], "FooOK")
-            self.assertEqual(app_response['body'], tob("a=b&c=d"))
-            self.assertEqual(app_response['header']['Content-Type'], "application/x-www-form-urlencoded")
+            self.assertEqual(app_response['body'], tob("{'valid': true, 'foo': 'bar'}"))
+            self.assertEqual(app_response['header']['Content-Type'], "application/json")
         mocked.assert_called_once()
 
     def test_override_response(self):

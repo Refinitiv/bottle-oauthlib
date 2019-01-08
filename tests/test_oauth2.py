@@ -4,6 +4,8 @@ from tests.bottle_tools import ServerTestBase
 from bottle_oauthlib.oauth2 import BottleOAuth2
 import oauthlib
 from oauthlib.oauth2 import Server
+from oauthlib.oauth2 import MetadataEndpoint
+from oauthlib.oauth2 import LegacyApplicationServer
 from tests import AttrDict
 import unittest
 from unittest import mock
@@ -259,5 +261,35 @@ class test_create_revocation_decorators(ServerTestBase):
         with mock.patch("oauthlib.oauth2.Server.create_revocation_response", return_value=self.fake_response) as mocked:
             app_response = self.urlopen("/revoke")
             self.assertEqual(app_response['code'], 200)
+            self.assertEqual(app_response['status'], "fooOK")
+        mocked.assert_called_once()
+
+
+class test_create_metadata_decorators(ServerTestBase):
+    def setUp(self):
+        super().setUp()
+        self.oauth = BottleOAuth2(self.app)
+        self.validator = mock.MagicMock()
+        self.server = LegacyApplicationServer(self.validator)
+        self.metadata_endpoint = MetadataEndpoint([self.server], claims={
+            "issuer": "https://xx",
+            "token_endpoint": "https://xx/token",
+            "revocation_endpoint": "https://xx/revoke",
+            "introspection_endpoint": "https://xx/tokeninfo"
+        })
+
+        self.oauth.initialize(self.metadata_endpoint)
+
+        self.fake_response = ({}, "", "200 fooOK")
+
+    def test_valid_response(self):
+        @self.app.route('/.well-known/oauth-authorization-server')
+        @self.oauth.create_metadata_response()
+        def test(): return None
+
+        with mock.patch("oauthlib.oauth2.MetadataEndpoint.create_metadata_response",
+                        return_value=self.fake_response) as mocked:
+            app_response = self.urlopen("/.well-known/oauth-authorization-server")
+            self.assertEqual(app_response['code'], 200, app_response)
             self.assertEqual(app_response['status'], "fooOK")
         mocked.assert_called_once()

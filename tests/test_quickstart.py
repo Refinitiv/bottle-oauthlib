@@ -64,7 +64,7 @@ class test_quickstart(ServerTestBase):
             "scope=mail",
         ]), env={'CONTENT_TYPE': "application/x-www-form-urlencoded"})
 
-        self.assertError(resp, 401, "invalid_scope")
+        self.assertError(resp, 400, "invalid_scope")
 
     def test_invaliduser(self):
         resp = self.urlopen("/token", method="POST", post="&".join([

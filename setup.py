@@ -23,6 +23,7 @@ setup(
     packages=['bottle_oauthlib'],
     install_requires=dependencies,
     test_suite='tests',
+    tests_require=['oauthlib>=3.0.0'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',

@@ -1,9 +1,14 @@
 language: python
+python: 3.7
+dist: xenial
 sudo: false
-cache:
-- pip
-python:
-- '3.6'
+cache: pip
+matrix:
+  include:
+  - python: 3.6
+    env: TOXENV=py36
+  - python: 3.7
+    env: TOXENV=py37
 before_install:
 - pip install tox coveralls
 script:

@@ -8,11 +8,11 @@
 
 Interested to implement your own OAuth2.0 provider in python ? You're at the right place.
 
-Combine the excellent https://github.com/oauthlib/oauthlib framework and the micro-framework https://github.com/bottlepy/bottle to provide OAuth2.0 authentication in only a couple of minutes.
+Combine the excellent https://github.com/oauthlib/oauthlib framework and the micro-framework https://github.com/bottlepy/bottle to provide OAuth2.0 authorization in only a couple of minutes.
 
-OAuth2.0 basic knowledge is more than welcomed ! However, for novices users, as a rule of thumb, you must understand the OAuth2.0 is a delegation protocol. Basically, it delegates authentication (credentials) and authorization (scopes) to an application (client).
+OAuth2.0 basic knowledge is more than welcomed ! However, for novices users, as a rule of thumb, you must understand the OAuth2.0 is a delegation protocol. Basically, it delegates authorization (through scopes) to an application (client).
 
-Note that you can use this project to implement the delegation part or the authorization server or the applications, or all combined. That's your choice.
+Note that you can implement only the delegation part or the authorization server or an application, or all combined. That's your choice.
 
 For more information about OAuth2.0 fundamentals, check https://oauth.net/2/
 
@@ -67,7 +67,7 @@ def access_calendar():
     )
 ```
 
-See the full example in our code source at [quickstart.py](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/tests/examples/quickstart.py). Don't hesitate to copy it for your own project and its own unit tests at [test_quickstart.py](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/tests/test_quickstart.py) to be confident in your updates.
+See the full example in our code source at [quickstart.py](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/tests/examples/quickstart.py). Don't hesitate to copy it for your own project and its unit tests at [test_quickstart.py](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/tests/test_quickstart.py) to be confident when you upgrade.
 
 
 ## Help & support

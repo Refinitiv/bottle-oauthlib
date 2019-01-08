@@ -6,7 +6,7 @@
 
 ## Context
 
-Interested to implement your own OAuth2.0 provider in python ? You're at the right place.
+Interested to implement your own OAuth2.0 or OpenID Connect Provider in python ? You're at the right place.
 
 Combine the excellent https://github.com/oauthlib/oauthlib framework and the micro-framework https://github.com/bottlepy/bottle to provide OAuth2.0 authorization in only a couple of minutes.
 

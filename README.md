@@ -69,6 +69,7 @@ def access_calendar():
 
 See the full example in our code source at [quickstart.py](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/tests/examples/quickstart.py). Don't hesitate to copy it for your own project and its unit tests at [test_quickstart.py](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/tests/test_quickstart.py) to be confident when you upgrade.
 
+If you are not interested in doing a full Provider but only a Resource Server, just use the quickstart example for OAuth2.0 Resource Server. You can either use an Introspection Endpoint or decode JWT and validate yourself the Bearer tokens. Start with the [quickstart_resourceserver.py](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/tests/examples/quickstart_resourceserver.py) and its unit tests at [test_quickstart_resourceserver.py](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/tests/test_quickstart_resourceserver.py).
 
 ## Help & support
 

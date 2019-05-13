@@ -8,6 +8,7 @@ from oauthlib.oauth2 import MetadataEndpoint
 from oauthlib.oauth2 import LegacyApplicationServer
 from tests import AttrDict
 from unittest import mock
+import unittest
 
 
 class test_not_initialized(ServerTestBase):
@@ -42,6 +43,15 @@ class test_not_initialized(ServerTestBase):
     def test_create_introspect_response(self):
         @self.app.route('/foo')
         @self.oauth.create_introspect_response()
+        def test(): return 'bar'
+
+        with self.assertRaises(AssertionError):
+            test()
+
+    @unittest.skip("remove skip once https://github.com/oauthlib/oauthlib/pull/677 merged")
+    def test_create_userinfo_response(self):
+        @self.app.route('/foo')
+        @self.oauth.create_userinfo_response()
         def test(): return 'bar'
 
         with self.assertRaises(AssertionError):
@@ -164,6 +174,33 @@ class test_create_introspect_decorators(ServerTestBase):
             self.assertEqual(app_response['code'], 200)
             self.assertEqual(app_response['status'], "FooOK")
             self.assertEqual(app_response['body'], tob("{'valid': false}"))
+            self.assertEqual(app_response['header']['Content-Type'], "application/json")
+        mocked.assert_called_once()
+
+
+class test_create_userinfo_decorators(ServerTestBase):
+    def setUp(self):
+        super().setUp()
+        self.oauth = BottleOAuth2(self.app)
+        self.validator = mock.MagicMock()
+        self.server = Server(self.validator)
+        self.oauth.initialize(self.server)
+
+        self.fake_response = ({
+            "Content-Type": "application/json"
+        }, "{'sub': 'johndoe123', 'foo': 'bar'}", "200 FooOK")
+
+    @unittest.skip("remove skip once https://github.com/oauthlib/oauthlib/pull/677 merged")
+    def test_valid_response(self):
+        @self.app.route('/foo')
+        @self.oauth.create_userinfo_response()
+        def test(): return None
+
+        with mock.patch("oauthlib.oauth2.Server.create_userinfo_response", return_value=self.fake_response) as mocked:
+            app_response = self.urlopen("/foo")
+            self.assertEqual(app_response['code'], 200)
+            self.assertEqual(app_response['status'], "FooOK")
+            self.assertEqual(app_response['body'], tob("{'valid': true, 'foo': 'bar'}"))
             self.assertEqual(app_response['header']['Content-Type'], "application/json")
         mocked.assert_called_once()
 

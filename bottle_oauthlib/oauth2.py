@@ -147,7 +147,7 @@ class BottleOAuth2(object):
                         uri, http_method, body, headers
                     )
                 except OAuth2Error as e:
-                    resp_headers, resp_body, resp_status = {}, e.json, e.status_code
+                    resp_headers, resp_body, resp_status = e.headers, e.json, e.status_code
                 set_response(bottle.request, bottle.response, resp_status,
                              resp_headers, resp_body, force_json=True)
 
@@ -176,7 +176,7 @@ class BottleOAuth2(object):
                         uri, http_method, body, headers, credentials_extra
                     )
                 except OAuth2Error as e:
-                    resp_headers, resp_body, resp_status = {}, e.json, e.status_code
+                    resp_headers, resp_body, resp_status = e.headers, e.json, e.status_code
                 set_response(bottle.request, bottle.response, resp_status,
                              resp_headers, resp_body)
 
@@ -229,7 +229,7 @@ class BottleOAuth2(object):
                         uri, http_method, body, headers
                     )
                 except OAuth2Error as e:
-                    resp_headers, resp_body, resp_status = {}, e.json, e.status_code
+                    resp_headers, resp_body, resp_status = e.headers, e.json, e.status_code
                 set_response(bottle.request, bottle.response, resp_status, resp_headers,
                              resp_body, force_json=True)
 
@@ -260,7 +260,7 @@ class BottleOAuth2(object):
                         )})
                     raise e
                 except OAuth2Error as e:
-                    resp_headers, resp_body, resp_status = {}, e.json, e.status_code
+                    resp_headers, resp_body, resp_status = e.headers, e.json, e.status_code
                 set_response(bottle.request, bottle.response, resp_status, resp_headers, resp_body)
 
                 func_response = f(*args, **kwargs)
@@ -283,7 +283,7 @@ class BottleOAuth2(object):
                         uri, http_method=http_method, body=body, headers=headers
                     )
                 except OAuth2Error as e:
-                    resp_headers, resp_body, resp_status = {}, e.json, e.status_code
+                    resp_headers, resp_body, resp_status = e.headers, e.json, e.status_code
 
                 set_response(bottle.request, bottle.response, resp_status, resp_headers, resp_body)
 

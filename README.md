@@ -44,7 +44,7 @@ validator = MyOAuth2_Validator()
 server = oauth2.Server(validator)
 
 app = bottle.Bottle()
-app.auth = BottleOAuth2()
+app.auth = BottleOAuth2(app)
 app.auth.initialize(server)
 ```
 

@@ -40,6 +40,12 @@ def extract_params(bottle_request):
     basic_auth = {}
     body = bottle_request.body
 
+    if "application/json" in bottle_request.content_type:
+        try:
+            body = bottle.request.json
+        except ValueError:
+            body = None
+
     # TODO: Remove HACK of using body for GET requests. Use commented code below
     # once https://github.com/oauthlib/oauthlib/issues/609 is fixed.
     if username is not None:
@@ -304,6 +310,32 @@ class BottleOAuth2(object):
 
                 try:
                     resp_headers, resp_body, resp_status = self._oauthlib.create_userinfo_response(
+                        uri, http_method=http_method, body=body, headers=headers
+                    )
+                except OAuth2Error as e:
+                    resp_headers, resp_body, resp_status = e.headers, e.json, e.status_code
+
+                set_response(bottle.request, bottle.response, resp_status, resp_headers,
+                             resp_body, force_json=True)
+
+                func_response = f(*args, **kwargs)
+                if func_response:
+                    return func_response
+                return bottle.response
+            return wrapper
+        return decorator
+
+    # todo: DRY - all these methods are just copy paste, add tests
+    def create_registration_response(self):
+        def decorator(f):
+            @functools.wraps(f)
+            def wrapper(*args, **kwargs):
+                assert self._oauthlib, "BottleOAuth2 not initialized with OAuthLib"
+
+                uri, http_method, body, headers = extract_params(bottle.request)
+
+                try:
+                    resp_headers, resp_body, resp_status = self._oauthlib.create_registration_response(
                         uri, http_method=http_method, body=body, headers=headers
                     )
                 except OAuth2Error as e:

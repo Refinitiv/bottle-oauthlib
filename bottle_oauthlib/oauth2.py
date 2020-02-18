@@ -1,12 +1,12 @@
-import bottle
-from bottle import HTTPError
 import functools
 import json
-from oauthlib.common import add_params_to_uri
-from oauthlib.oauth2 import FatalClientError
-from oauthlib.oauth2 import OAuth2Error
-import requests
 import logging
+
+import bottle
+import requests
+from bottle import HTTPError
+from oauthlib.common import add_params_to_uri
+from oauthlib.oauth2 import FatalClientError, OAuth2Error
 
 log = logging.getLogger(__name__)
 
@@ -25,26 +25,44 @@ def extract_params(bottle_request):
     # this returns (None, None) for Bearer Token.
     username, password = bottle_request.auth if bottle_request.auth else (None, None)
 
-    if "application/x-www-form-urlencoded" in bottle_request.content_type:
-        client = {}
+    client = {}
+    if bottle_request.auth:
         if username is not None:
             client["client_id"] = username
         if password is not None:
             client["client_secret"] = password
+
+    # PUT/POST request
+    if "application/x-www-form-urlencoded" in bottle_request.content_type:
+        # todo: what about getting credentials from request payload (DCR)
         return \
             bottle_request.url, \
             bottle_request.method, \
             dict(client, **bottle_request.forms), \
             dict(bottle_request.headers)
 
-    basic_auth = {}
-    body = bottle_request.body
-
     if "application/json" in bottle_request.content_type:
         try:
-            body = bottle.request.json
+            body = bottle_request.json
         except ValueError:
-            body = None
+            body = {}
+
+        if not bottle_request.auth and body:
+            if "client_id" in body:
+                client["client_id"] = body["client_id"]
+            if "client_secret" in body:
+                client["client_secret"] = body["client_secret"]
+
+        return (
+            bottle_request.url,
+            bottle_request.method,
+            dict(client, **body),
+            dict(bottle_request.headers),
+        )
+
+    # GET request
+    basic_auth = {}
+    body = bottle_request.body
 
     # TODO: Remove HACK of using body for GET requests. Use commented code below
     # once https://github.com/oauthlib/oauthlib/issues/609 is fixed.

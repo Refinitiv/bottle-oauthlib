@@ -1,7 +1,7 @@
 # bottle-oauthlib
 
-[![Jenkins build](https://api.travis-ci.org/thomsonreuters/bottle-oauthlib.svg?branch=master)](https://travis-ci.org/thomsonreuters/bottle-oauthlib)
-[![Coverage Status](https://coveralls.io/repos/github/thomsonreuters/bottle-oauthlib/badge.svg?branch=master)](https://coveralls.io/github/thomsonreuters/bottle-oauthlib?branch=master)
+[![Jenkins build](https://api.travis-ci.org/Refinitiv/bottle-oauthlib.svg?branch=master)](https://travis-ci.org/Refinitiv/bottle-oauthlib)
+[![Coverage Status](https://coveralls.io/repos/github/Refinitiv/bottle-oauthlib/badge.svg?branch=master)](https://coveralls.io/github/Refinitiv/bottle-oauthlib?branch=master)
 [![pip install bottle-oauthlib](https://img.shields.io/pypi/v/bottle-oauthlib.svg)](https://pypi.python.org/pypi/bottle-oauthlib)
 
 ## Context
@@ -44,7 +44,7 @@ validator = MyOAuth2_Validator()
 server = oauth2.Server(validator)
 
 app = bottle.Bottle()
-app.auth = BottleOAuth2()
+app.auth = BottleOAuth2(app)
 app.auth.initialize(server)
 ```
 
@@ -67,22 +67,22 @@ def access_calendar():
     )
 ```
 
-See the full example in our code source at [quickstart.py](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/tests/examples/quickstart.py). Don't hesitate to copy it for your own project and its unit tests at [test_quickstart.py](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/tests/test_quickstart.py) to be confident when you upgrade.
+See the full example in our code source at [quickstart.py](https://github.com/Refinitiv/bottle-oauthlib/blob/master/tests/examples/quickstart.py). Don't hesitate to copy it for your own project and its unit tests at [test_quickstart.py](https://github.com/Refinitiv/bottle-oauthlib/blob/master/tests/test_quickstart.py) to be confident when you upgrade.
 
-If you are not interested in doing a full Provider but only a Resource Server, just use the quickstart example for OAuth2.0 Resource Server. You can either use an Introspection Endpoint or decode JWT and validate yourself the Bearer tokens. Start with the [quickstart_resourceserver.py](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/tests/examples/quickstart_resourceserver.py) and its unit tests at [test_quickstart_resourceserver.py](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/tests/test_quickstart_resourceserver.py).
+If you are not interested in doing a full Provider but only a Resource Server, just use the quickstart example for OAuth2.0 Resource Server. You can either use an Introspection Endpoint or decode JWT and validate yourself the Bearer tokens. Start with the [quickstart_resourceserver.py](https://github.com/Refinitiv/bottle-oauthlib/blob/master/tests/examples/quickstart_resourceserver.py) and its unit tests at [test_quickstart_resourceserver.py](https://github.com/Refinitiv/bottle-oauthlib/blob/master/tests/test_quickstart_resourceserver.py).
 
 ## Help & support
 
-Feel free to ask question or support by opening a Github issue https://github.com/thomsonreuters/bottle-oauthlib/issues.
+Feel free to ask question or support by opening a Github issue https://github.com/Refinitiv/bottle-oauthlib/issues.
 
 
 ## Contribution
 
-Don't hesitate to propose PR, they are more than welcomed. Please, be sure you're compliant with our [Contribution guide](https://github.com/thomsonreuters/bottle-oauthlib/blob/master/docs/CONTRIBUTING.md).
+Don't hesitate to propose PR, they are more than welcomed. Please, be sure you're compliant with our [Contribution guide](https://github.com/Refinitiv/bottle-oauthlib/blob/master/docs/CONTRIBUTING.md).
 
 
 ## Copyright
 
 This document is licensed under BSD-3-Clause license. See LICENSE for details.
 
-The code has been opened by (c) Thomson Reuters.
+The code was opened by (c) Refinitiv (previously Thomson Reuters).

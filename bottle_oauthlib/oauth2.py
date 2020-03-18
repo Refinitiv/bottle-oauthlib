@@ -52,6 +52,7 @@ def extract_params(bottle_request):
                 client["client_id"] = body["client_id"]
             if "client_secret" in body:
                 client["client_secret"] = body["client_secret"]
+
         return (
             bottle_request.url,
             bottle_request.method,
@@ -460,4 +461,3 @@ class BottleOAuth2(object):
                 return bottle.response
             return wrapper
         return decorator
-

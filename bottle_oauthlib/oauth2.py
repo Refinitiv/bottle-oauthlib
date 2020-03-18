@@ -439,3 +439,25 @@ class BottleOAuth2(object):
                 return bottle.response
             return wrapper
         return decorator
+
+    def create_client_update_response(self):
+        def decorator(f):
+            @functools.wraps(f)
+            def wrapper(client_id, *args, **kwargs):
+                assert self._oauthlib, "BottleOAuth2 not initialized with OAuthLib"
+                uri, http_method, body, headers = extract_params(bottle.request)
+                try:
+                    resp_headers, resp_body, resp_status = self._oauthlib.create_client_update_response(
+                        client_id, uri, http_method=http_method, body=body, headers=headers
+                    )
+                except OAuth2Error as e:
+                    resp_headers, resp_body, resp_status = e.headers, e.json, e.status_code
+                set_response(bottle.request, bottle.response, resp_status, resp_headers,
+                             resp_body, force_json=True)
+                func_response = f(client_id, *args, **kwargs)
+                if func_response:
+                    return func_response
+                return bottle.response
+            return wrapper
+        return decorator
+

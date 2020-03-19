@@ -43,7 +43,7 @@ def extract_params(bottle_request):
 
     if "application/json" in bottle_request.content_type:
         try:
-            body = bottle_request.json
+            body = bottle_request.json or {}
         except (ValueError, AttributeError):
             body = {}
 

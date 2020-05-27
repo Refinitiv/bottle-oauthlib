@@ -182,7 +182,7 @@ class BottleOAuth2(object):
             return wrapper
         return decorator
 
-    def create_token_response(self, credentials=None):
+    def create_token_response(self, credentials=None, force_json=False):
         def decorator(f):
             @functools.wraps(f)
             def wrapper(*args, **kwargs):
@@ -202,7 +202,7 @@ class BottleOAuth2(object):
                 except OAuth2Error as e:
                     resp_headers, resp_body, resp_status = e.headers, e.json, e.status_code
                 set_response(bottle.request, bottle.response, resp_status,
-                             resp_headers, resp_body)
+                             resp_headers, resp_body, force_json)
 
                 func_response = f(*args, **kwargs)
                 if func_response:

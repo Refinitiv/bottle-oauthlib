@@ -107,7 +107,7 @@ def set_response(bottle_request, bottle_response, status, headers, body, force_j
         # request want a json as response
         if force_json is True or (
                 "Accept" in bottle_request.headers and
-                "application/json" == bottle_request.headers["Accept"]):
+                "application/json" in bottle_request.headers["Accept"]):
             bottle_response["Content-Type"] = "application/json;charset=UTF-8"
             bottle_response.body = body
             log.debug("Body Bottle response body created as json: %r", bottle_response.body)

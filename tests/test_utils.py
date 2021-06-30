@@ -245,3 +245,13 @@ class set_response(unittest.TestCase):
         )
         self.assertIn("application/x-www-form-urlencoded", self.response["Content-Type"])
         self.assertEqual(self.response.body, 'foo=bar&bar=http%3A//foo%3Fbar%23fragment')
+
+    def test_resp_body_json_accept_json_encoding(self):
+        self.request.headers["Accept"] = "application/json; charset=utf-8"
+        oauth2.set_response(
+            self.request, self.response, 200,
+            {"Content-Type": "application/json; charset=utf-8"},
+            '{"foo": "bar", "bar": "foo"}'
+        )
+        self.assertIn("application/json", self.response["Content-Type"])
+        self.assertEqual(self.response.body, '{"foo": "bar", "bar": "foo"}')

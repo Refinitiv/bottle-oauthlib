@@ -17,4 +17,4 @@ jobs:
       - name: Install prereq
         run: pip install tox coveralls
       - name: Run python tests
-        run: tox -e ${{ env.python }}
+        run: tox -e ${{ matrix.python }}

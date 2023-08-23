@@ -8,7 +8,7 @@ with open(path.join(path.dirname(path.abspath(inspect.getfile(inspect.currentfra
     dependencies = fd.read().split('\n')
 
 try:
-    version_tag = os.environ["TRAVIS_TAG"]
+    version_tag = os.environ["GITHUB_REF_NAME"]
 except KeyError:
     version_tag = "1.0.0"
 

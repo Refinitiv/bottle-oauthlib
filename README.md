@@ -1,6 +1,6 @@
 # bottle-oauthlib
 
-[![Jenkins build](https://api.travis-ci.org/Refinitiv/bottle-oauthlib.svg?branch=master)](https://travis-ci.org/Refinitiv/bottle-oauthlib)
+[![Build](https://github.com/refinitiv/bottle-oauthlib/actions/workflows/python.yml/badge.svg)](https://github.com/Refinitiv/bottle-oauthlib/actions)
 [![Coverage Status](https://coveralls.io/repos/github/Refinitiv/bottle-oauthlib/badge.svg?branch=master)](https://coveralls.io/github/Refinitiv/bottle-oauthlib?branch=master)
 [![pip install bottle-oauthlib](https://img.shields.io/pypi/v/bottle-oauthlib.svg)](https://pypi.python.org/pypi/bottle-oauthlib)
 

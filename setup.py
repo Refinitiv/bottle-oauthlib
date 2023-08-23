@@ -8,7 +8,7 @@ with open(path.join(path.dirname(path.abspath(inspect.getfile(inspect.currentfra
     dependencies = fd.read().split('\n')
 
 try:
-    version_tag = os.environ["TRAVIS_TAG"]
+    version_tag = os.environ["GITHUB_REF_NAME"]
 except KeyError:
     version_tag = "1.0.0"
 
@@ -29,6 +29,9 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
     ]
 )

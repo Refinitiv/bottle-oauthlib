@@ -1,0 +1,26 @@
+name: GitHub Python Packaging
+run-name: ${{ github.actor }} build and unittest
+on:
+  push:
+    tags:        
+      - '*'
+jobs:
+  pypi-publish:
+    name: Upload release to PyPI
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/bottle-oauthlib
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+    steps:
+    - name: Check out repository code
+      uses: actions/checkout@v3
+    - name: Install prereq
+      run: pip install wheel
+    - name: Build python package
+      run: python setup.py build
+    - name: Package python package
+      run: python setup.py sdist bdist_wheel
+    - name: Publish package distributions to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1

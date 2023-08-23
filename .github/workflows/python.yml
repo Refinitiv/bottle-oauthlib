@@ -18,3 +18,5 @@ jobs:
         run: pip install tox coveralls
       - name: Run python tests
         run: tox -e ${{ matrix.python }}
+      - name: Coveralls
+        run: coveralls

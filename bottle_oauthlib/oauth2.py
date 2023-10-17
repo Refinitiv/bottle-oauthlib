@@ -112,7 +112,11 @@ def set_response(bottle_request, bottle_response, status, headers, body, force_j
             bottle_response.body = body
             log.debug("Body Bottle response body created as json: %r", bottle_response.body)
         else:
-            from urllib.parse import quote
+            import sys
+            if ((3, 0) <= sys.version_info <= (3, 9)):
+                from urllib.parse import quote
+            elif ((2, 0) <= sys.version_info <= (2, 9)):
+                from urlparse import urlparse
 
             bottle_response["Content-Type"] = "application/x-www-form-urlencoded;charset=UTF-8"
             bottle_response.body = "&".join([
